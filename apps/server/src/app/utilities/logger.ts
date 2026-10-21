@@ -3,16 +3,16 @@ import { createLogger, format, transport, transports } from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 import config from "../config/config";
 
-const { combine, timestamp, printf, colorize } = format;
+const { combine, timestamp, printf, colorize, errors } = format;
 
 // log format
-const myFormat = printf(({ level, message, timestamp }) => {
+const myFormat = printf(({ level, message, timestamp, stack }) => {
   const date = new Date(timestamp as string | number | Date);
   const hour = date.getHours();
   const minute = date.getMinutes();
   const second = date.getSeconds();
   const milliseconds = date.getMilliseconds();
-  return `{${date.toDateString()} ${hour}:${minute}:${second}:${milliseconds}} ${level}: ${message}`;
+  return `{${date.toDateString()} ${hour}:${minute}:${second}:${milliseconds}} ${level}: ${stack || message}`;
 });
 
 /**
@@ -28,17 +28,16 @@ const createContextualLogger = (
   fileNamePrefix: string,
   level: string = "info"
 ) => {
-  const activeTransports: transport[] = [];
+  const activeTransports: transport[] = [
+    new transports.Console({
+      stderrLevels: ["error"],
+      format:
+        config.env === "development" ? combine(colorize(), myFormat) : myFormat,
+    }),
+  ];
 
-  if (config.env === "development") {
-    // Development Mode: Colorized Console Only (No file spam)
-    activeTransports.push(
-      new transports.Console({
-        format: combine(colorize(), myFormat),
-      })
-    );
-  } else {
-    // Production Mode: Rotating File Logs ONLY (No terminal output)
+  if (config.env !== "development") {
+    // Retain rotating production files alongside Docker stdout/stderr logs.
     activeTransports.push(
       new DailyRotateFile({
         filename: path.join(
@@ -58,7 +57,7 @@ const createContextualLogger = (
 
   return createLogger({
     level,
-    format: combine(timestamp(), myFormat),
+    format: combine(errors({ stack: true }), timestamp(), myFormat),
     transports: activeTransports,
   });
 };

@@ -41,6 +41,9 @@ COPY --from=builder /app/apps/server/package.json ./apps/server/package.json
 COPY --from=builder /app/apps/server/dist ./apps/server/dist
 
 WORKDIR /app/apps/server
+ENV APP_ROOT=/app/apps/server
+# Keep the pnpm workspace paths intact so dependency symlinks remain valid.
+RUN test -f dist/server.js && node --check dist/server.js
 
 EXPOSE 5000
 
