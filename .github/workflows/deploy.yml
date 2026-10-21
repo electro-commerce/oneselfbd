@@ -19,6 +19,8 @@ jobs:
   build-and-verify:
     name: Build & Verify Monorepo
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: "--max-old-space-size=4096"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -108,9 +110,12 @@ jobs:
             # Navigate to deployment directory and update stack
             cd deployment/vps
 
-            echo "Building and launching containers..."
+            echo "Building containers sequentially to prevent VPS out-of-memory..."
             docker compose -f docker-compose.prod.yml pull --ignore-buildable || true
-            docker compose -f docker-compose.prod.yml up -d --build --remove-orphans
+            docker compose -f docker-compose.prod.yml build server
+            docker compose -f docker-compose.prod.yml build front
+            docker compose -f docker-compose.prod.yml build dashboard
+            docker compose -f docker-compose.prod.yml up -d --remove-orphans
 
             echo "Pruning dangling images..."
             docker image prune -f --filter "until=24h"

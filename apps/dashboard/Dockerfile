@@ -27,6 +27,7 @@ COPY apps/dashboard/ apps/dashboard/
 
 # Build standalone Next.js bundle
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN pnpm --filter oneself-dashboard build
 
 FROM node:24-alpine AS runner
