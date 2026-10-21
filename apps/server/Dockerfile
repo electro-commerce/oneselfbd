@@ -25,7 +25,8 @@ RUN pnpm install --frozen-lockfile
 # Copy source code
 COPY apps/server/ apps/server/
 
-# Build TypeScript
+# Build TypeScript. This does not execute the app or consume deployment variables.
+# Database, JWT, and service configuration are injected by Compose at runtime.
 RUN pnpm --filter oneself-server build
 
 FROM node:24-alpine AS runner

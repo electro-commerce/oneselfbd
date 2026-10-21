@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 # ==============================================================================
 # Production Dockerfile for apps/front (Next.js Customer Storefront)
 # ==============================================================================
@@ -28,7 +29,11 @@ COPY apps/front/ apps/front/
 # Build standalone Next.js bundle
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_OPTIONS="--max-old-space-size=4096"
-RUN pnpm --filter oneself-front build
+# GitHub Actions supplies the app configuration from Variables (or Secrets)
+# as a BuildKit file mount. Its content hash invalidates the build cache.
+ARG FRONTEND_ENV_HASH
+RUN --mount=type=secret,id=frontend_env,target=/app/apps/front/.env.production,required=true \
+    test -n "$FRONTEND_ENV_HASH" && pnpm --filter oneself-front build
 
 FROM node:24-alpine AS runner
 WORKDIR /app
