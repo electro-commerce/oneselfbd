@@ -6,10 +6,10 @@ import { TPaymentMethod } from "@/types/paymentMethod";
 import SX21LandingClient from "./SX21LandingClient";
 import { getImageSrc } from "@/lib/utils";
 
-// Product ID can be set via environment variable: SX21_PRODUCT_ID or NEXT_PUBLIC_SX21_PRODUCT_ID
+// Product ID can be set via environment variable: SX21_PRODUCT_ID or NEXT_PUBLIC_FRONT_SX21_PRODUCT_ID
 const SX21_PRODUCT_ID =
   process.env.SX21_PRODUCT_ID ||
-  process.env.NEXT_PUBLIC_SX21_PRODUCT_ID ||
+  process.env.NEXT_PUBLIC_FRONT_SX21_PRODUCT_ID ||
   "";
 
 export const revalidate = false; // On-demand revalidation only
@@ -66,7 +66,11 @@ export async function generateMetadata(): Promise<Metadata> {
 // Fallback shipping charges if API is unreachable
 const DEFAULT_SHIPPING_CHARGES: TShippingCharges[] = [
   { _id: "inside-dhaka", name: "ঢাকার ভিতরে (হোম ডেলিভারি)", amount: 70 },
-  { _id: "outside-dhaka", name: "ঢাকার বাইরে (কুরিয়ার হোম ডেলিভারি)", amount: 130 },
+  {
+    _id: "outside-dhaka",
+    name: "ঢাকার বাইরে (কুরিয়ার হোম ডেলিভারি)",
+    amount: 130,
+  },
 ];
 
 // Fallback payment method (Cash on delivery) if API is unreachable
@@ -84,7 +88,7 @@ const SX21MicrophonePage = async () => {
   const promises: [
     Promise<{ data?: TSingleProduct } | null>,
     Promise<{ data?: TShippingCharges[] } | null>,
-    Promise<{ data?: TPaymentMethod[] } | null>
+    Promise<{ data?: TPaymentMethod[] } | null>,
   ] = [
     SX21_PRODUCT_ID
       ? serverSideFetcher<TSingleProduct>({
