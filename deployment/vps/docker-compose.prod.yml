@@ -24,9 +24,7 @@ services:
       - oneself_network
 
   server:
-    build:
-      context: ../..
-      dockerfile: apps/server/Dockerfile
+    image: ${IMAGE_REPOSITORY:?Set IMAGE_REPOSITORY to ghcr.io/owner/repo}-server:${IMAGE_TAG:?Set IMAGE_TAG to the deployed commit SHA}
     container_name: oneself-server-prod
     restart: always
     extra_hosts:
@@ -47,31 +45,24 @@ services:
       - oneself_network
 
   front:
-    build:
-      context: ../..
-      dockerfile: apps/front/Dockerfile
+    image: ${IMAGE_REPOSITORY:?Set IMAGE_REPOSITORY to ghcr.io/owner/repo}-front:${IMAGE_TAG:?Set IMAGE_TAG to the deployed commit SHA}
     container_name: oneself-front-prod
     restart: always
     environment:
       NODE_ENV: production
       PORT: 3000
-      NEXT_PUBLIC_BASE_API_URL: https://${DOMAIN_NAME:-localhost}/api/v1
-      NEXT_PUBLIC_APP_URL: https://${DOMAIN_NAME:-localhost}
     depends_on:
       - server
     networks:
       - oneself_network
 
   dashboard:
-    build:
-      context: ../..
-      dockerfile: apps/dashboard/Dockerfile
+    image: ${IMAGE_REPOSITORY:?Set IMAGE_REPOSITORY to ghcr.io/owner/repo}-dashboard:${IMAGE_TAG:?Set IMAGE_TAG to the deployed commit SHA}
     container_name: oneself-dashboard-prod
     restart: always
     environment:
       NODE_ENV: production
       PORT: 3001
-      NEXT_PUBLIC_BASE_API_URL: https://${DOMAIN_NAME:-localhost}/api/v1
     depends_on:
       - server
     networks:
