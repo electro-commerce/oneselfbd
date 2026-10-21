@@ -1,0 +1,52 @@
+{
+  email {$ACME_EMAIL:admin@oneself.com}
+}
+
+# Customer Storefront & Shared Reverse Proxy
+{$DOMAIN_NAME:localhost} {
+  # Forward API routes to Express Server
+  handle /api/* {
+    reverse_proxy server:5000
+  }
+
+  # Forward Uploads directory if served by server
+  handle /uploads/* {
+    reverse_proxy server:5000
+  }
+
+  # Forward All Other Traffic to Next.js Customer Storefront
+  handle {
+    reverse_proxy front:3000
+  }
+
+  encode gzip zstd
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+}
+
+# Admin & Operations Dashboard (Subdomain)
+{$DASHBOARD_DOMAIN:admin.localhost} {
+  # API proxy for dashboard requests
+  handle /api/* {
+    reverse_proxy server:5000
+  }
+
+  # Dashboard UI
+  handle {
+    reverse_proxy dashboard:3001
+  }
+
+  encode gzip zstd
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    X-Frame-Options "SAMEORIGIN"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+}
