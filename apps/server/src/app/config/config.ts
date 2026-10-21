@@ -45,7 +45,7 @@ const toMs = (
 export default {
   env: env.NODE_ENV,
   port: env.PORT,
-  DBUrl: env.DB_URL,
+  DBUrl: env.MONGODB_URI || env.DB_URL,
   clientSideURL: env.CLIENT_SIDE_URL,
   main_domain: env.MAIN_DOMAIN,
   companyInfo: {
