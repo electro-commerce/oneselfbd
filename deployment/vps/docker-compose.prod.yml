@@ -23,34 +23,18 @@ services:
     networks:
       - oneself_network
 
-  mongo:
-    image: mongo:7-jammy
-    container_name: oneself-mongo-prod
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-oneself}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-oneself_secret_pass}
-      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-oneself}
-    volumes:
-      - mongo_prod_data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - oneself_network
-
   server:
     build:
       context: ../..
       dockerfile: apps/server/Dockerfile
     container_name: oneself-server-prod
     restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       NODE_ENV: production
       PORT: 5000
-      DB_URL: ${DB_URL:-mongodb://${MONGO_INITDB_ROOT_USERNAME:-oneself}:${MONGO_INITDB_ROOT_PASSWORD:-oneself_secret_pass}@mongo:27017/${MONGO_INITDB_DATABASE:-oneself}?authSource=admin}
+      DB_URL: ${DB_URL:-mongodb://host.docker.internal:27017/oneself}
       CLIENT_SIDE_URL: https://${DOMAIN_NAME:-localhost}
       MAIN_DOMAIN: https://${DOMAIN_NAME:-localhost}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
@@ -58,9 +42,6 @@ services:
       UPLOAD_PLATFORM: ${UPLOAD_PLATFORM:-local}
     volumes:
       - server_uploads:/app/apps/server/uploads
-    depends_on:
-      mongo:
-        condition: service_healthy
     networks:
       - oneself_network
 
@@ -96,7 +77,6 @@ services:
       - oneself_network
 
 volumes:
-  mongo_prod_data:
   server_uploads:
   caddy_data:
   caddy_config:
