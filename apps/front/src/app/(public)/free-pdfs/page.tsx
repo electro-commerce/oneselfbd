@@ -1,0 +1,167 @@
+import {
+  EmptyState,
+  Pagination,
+} from "@/app/(public)/_components/blog-qna/BlogQnaCards";
+import { SITE_URL } from "@/app/(public)/_components/blog-qna/utils";
+import ContainerMax from "@/components/shared/containerMax/ContainerMax";
+import JsonLd from "@/components/shared/JsonLd";
+import { Card, CardContent } from "@/components/ui/card";
+import serverSideFetcher from "@/utilities/serverSideFetcher";
+import { Sparkles, Search, Download } from "lucide-react";
+import { Metadata } from "next";
+import { getImageSrc } from "@/lib/utils";
+
+type TSearchParams = Record<string, string | string[] | undefined>;
+
+export const metadata: Metadata = {
+  title: "ফ্রি পিডিএফ গাইড | TechMela",
+  description:
+    "TechMela-র বিশেষ ফ্রি গাইড ও ক্যাটালগ! সহজে ডাউনলোড করে পড়ুন।",
+  alternates: {
+    canonical: `${SITE_URL}/free-pdfs`,
+  },
+};
+
+type TBookPreview = {
+  _id: string;
+  src: string;
+  alt: string;
+  previewType: string;
+  createdAt: string;
+};
+
+async function getFreePdfs(searchParams: TSearchParams) {
+  const page = Number(searchParams.page || 1);
+  return serverSideFetcher<TBookPreview[]>({
+    url: "/book-previews",
+    tags: ["bookPreviews"],
+    params: {
+      page,
+      limit: 12,
+      previewType: "free",
+      searchTerm: searchParams.search,
+      sort: "-createdAt",
+    },
+  });
+}
+
+function FreePdfCard({ item }: { item: TBookPreview }) {
+  // src is already an absolute R2 URL or relative, use getImageSrc to be safe
+  const fileUrl = getImageSrc(item.src);
+
+  return (
+    <Card className="overflow-hidden rounded-lg border bg-background shadow-sm transition-shadow hover:shadow-md">
+      <CardContent className="flex flex-col gap-4 p-5 h-full">
+        <div className="flex items-start gap-4">
+          <div className="rounded-md bg-primary/10 p-3 text-primary">
+            <Sparkles className="h-6 w-6" />
+          </div>
+          <div className="flex-1 space-y-1">
+            <h2 className="line-clamp-2 text-lg font-bold text-primary">
+              {item.alt}
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              {new Date(item.createdAt).toLocaleDateString("bn-BD", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
+          </div>
+        </div>
+        <div className="mt-auto pt-4 border-t">
+          <a
+            href={fileUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex w-full items-center justify-center gap-2 rounded-md bg-primary/5 px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+          >
+            <Download className="h-4 w-4" />
+            ডাউনলোড করুন
+          </a>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+export default async function FreePdfsPage({
+  searchParams,
+}: {
+  searchParams: TSearchParams;
+}) {
+  const pdfRes = await getFreePdfs(searchParams);
+  const pdfList = pdfRes?.data || [];
+  const meta = pdfRes?.meta;
+
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "ফ্রি পিডিএফ",
+    url: `${SITE_URL}/free-pdfs`,
+  };
+
+  const search = String(searchParams.search || "");
+
+  return (
+    <>
+      <JsonLd data={collectionJsonLd} />
+      <div className="bg-muted min-h-screen">
+        <section className="border-b bg-background">
+          <ContainerMax className="py-4 md:py-6">
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-sm font-semibold text-primary">
+                <Sparkles className="h-4 w-4" />
+                ফ্রি গাইড
+              </div>
+              <h1 className="text-3xl font-bold tracking-tight text-primary md:text-4xl">
+                ফ্রি গাইড ও ক্যাটালগ
+              </h1>
+              <p className="text-base leading-7 text-muted-foreground md:text-lg">
+                TechMela-র পক্ষ থেকে বিশেষ ফ্রি গাইড। ডাউনলোড করুন, পড়ুন এবং শেয়ার করুন।
+              </p>
+            </div>
+          </ContainerMax>
+        </section>
+
+        <ContainerMax className="grid gap-6 py-6 lg:grid-cols-[260px_1fr]">
+          <aside className="space-y-4 lg:sticky lg:top-4 lg:self-start">
+            <form
+              action="/free-pdfs"
+              className="rounded-lg border bg-background p-3 shadow-sm"
+            >
+              <label className="relative block">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  name="search"
+                  defaultValue={search}
+                  placeholder="পিডিএফ খুঁজুন..."
+                  className="h-10 w-full rounded-md border bg-background pl-9 pr-3 text-sm outline-none focus:border-primary"
+                />
+              </label>
+            </form>
+          </aside>
+
+          <div className="min-w-0">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {pdfList.length ? (
+                pdfList.map((item) => (
+                  <FreePdfCard key={item._id} item={item} />
+                ))
+              ) : (
+                <div className="md:col-span-2 xl:col-span-3">
+                  <EmptyState label="কোনো পিডিএফ পাওয়া যায়নি।" />
+                </div>
+              )}
+            </div>
+            <Pagination
+              meta={meta}
+              basePath="/free-pdfs"
+              searchParams={searchParams}
+            />
+          </div>
+        </ContainerMax>
+      </div>
+    </>
+  );
+}

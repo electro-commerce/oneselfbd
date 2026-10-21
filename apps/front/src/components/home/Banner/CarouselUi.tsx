@@ -1,0 +1,46 @@
+"use client";
+
+import { cn, getImageSrc } from "@/lib/utils";
+import { TSliders } from "@/types/sliders/slider";
+import Image from "next/image";
+import Link from "next/link";
+import { useState } from "react";
+
+const CarouselUi = ({ slider }: { slider: TSliders }) => {
+  const { bannerLink, image } = slider;
+  const initialSrc = getImageSrc(image?.src);
+  const [imgSrc, setImgSrc] = useState(initialSrc);
+
+  const content = (
+    <div
+      className={cn(
+        "block relative w-full aspect-[2/1] sm:aspect-auto sm:h-[400px] md:h-[500px] lg:h-[560px] rounded-2xl md:rounded-3xl overflow-hidden shadow-md group border border-border/80 bg-muted",
+        bannerLink && "cursor-pointer"
+      )}
+    >
+      <Image
+        className="w-full h-full object-cover transition-transform duration-700"
+        src={imgSrc}
+        alt={image?.alt || "টেকমেল্লা ব্যানার"}
+        height={1200}
+        width={1920}
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1920px"
+        priority
+        onError={() => {
+          if (imgSrc !== "/placeholder.webp") {
+            setImgSrc("/placeholder.webp");
+          }
+        }}
+      />
+      <div className="absolute inset-0 bg-foreground/5 pointer-events-none" />
+    </div>
+  );
+
+  if (bannerLink) {
+    return <Link href={bannerLink}>{content}</Link>;
+  }
+
+  return content;
+};
+
+export default CarouselUi;

@@ -1,0 +1,138 @@
+import { TStockStatus } from "@/const/product.const";
+import { TImage } from "../image";
+import { TTag } from "../tags/tag";
+
+export type TDate = {
+  start: string;
+  end: string;
+};
+
+export type TPrice = {
+  date: TDate;
+  _id: string;
+  regularPrice: number;
+  salePrice: number;
+  discountPercent: number;
+  priceSave: number;
+};
+
+export type TGalleryImage = {
+  src: string;
+  alt: string;
+  gallery: TImage;
+};
+
+export type TInventory = {
+  _id: string;
+  sku: string;
+  stockStatus: TStockStatus;
+  stockQuantity: number;
+  lowStockWarning: number;
+  manageStock: boolean;
+  showStockQuantity: boolean;
+  showStockWithText: boolean;
+  hideStock: boolean;
+  soldIndividually: boolean;
+  stockAvailable: number;
+};
+
+export type TAttribute = {
+  name: string;
+  values: string[];
+};
+
+export type TBrand = {
+  _id: string;
+  name: string;
+};
+
+export type TCategory = {
+  slug: string;
+  name: string;
+  _id: {
+    _id: string;
+    name: string;
+  };
+  subCategory: {
+    _id: string;
+    name: string;
+  }[];
+};
+
+export type TPublishedStatus = {
+  status: string;
+  visibility: string;
+  date: string;
+};
+
+export type TSeo = {
+  _id?: string;
+  metaTitle?: string;
+  keywords?: string[];
+  metaDescription?: string;
+  canonicalUrl?: string;
+  schemaMarkup?: string;
+};
+
+export type TSingleProduct = {
+  _id: string;
+  id: string;
+  author?: string;
+  title: string;
+  permalink: string;
+  type: string;
+  slug: string;
+  description?: string;
+  previewLink?: string;
+  shortDescription?: string;
+  usageGuidelines?: string;
+  additionalInfo?: string;
+  downloadable: boolean;
+  featured: boolean;
+  review: boolean;
+  price: TPrice;
+  warranty: boolean;
+  warrantyInfo: {
+    duration: { quantity: string; unit: string };
+    terms?: string;
+  };
+  thumbnail: TGalleryImage;
+  gallery: TGalleryImage[];
+  inventory: TInventory;
+  attribute: TAttribute[];
+  brand: TBrand;
+  category: TCategory[];
+  tag: TTag[];
+  publishedStatus: TPublishedStatus;
+  seo: TSeo;
+  createdBy: string;
+  isDeleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+  variations: TVariations[];
+};
+export type TVariations = {
+  options: string[];
+  priceDifference: number;
+  id: string;
+  salePrice?: number;
+  regularPrice?: number;
+  name: string;
+  _id: string;
+  length: number;
+  attributes: {
+    [key: string]: string;
+  };
+  price: TPrice;
+  inventory: TInventory;
+  image?: TGalleryImage;
+};
+
+export type VariationSelectorProps = {
+  variations: TVariations[];
+  initialPrice: {
+    regularPrice: number;
+    salePrice: number;
+  };
+};

@@ -1,0 +1,354 @@
+"use client";
+
+import PaymentMethods from "@/app/(public)/checkout/components/PaymentMethods";
+import SelectShippingArea from "@/app/(public)/checkout/components/SelectShippingArea";
+import ShippingAddress from "@/app/(public)/checkout/components/ShippingAddress";
+import VariationSelector from "@/app/(public)/product/[slug]/components/VariationSelector";
+import OrderLimit from "@/components/orderLimit/OrderLimit";
+import EcButton from "@/components/shared/EcButton/EcButton";
+import ErrorMessage from "@/components/shared/errorMessage/ErrorMessage";
+import { TCheckoutCustomer } from "@/app/(landing-page)/_hooks/useLandingPageTracking";
+import { isValidBdPhone } from "@/const/validation.const";
+import useCheckoutLogic from "@/hooks/useCheckoutLogic";
+import useSalesOrderSubmit from "@/hooks/useSalesOrderSubmit";
+import { getVariantLabel } from "@/lib/ec/variation";
+import { getImageSrc } from "@/lib/utils";
+import { TShippingInfo } from "@/types/order/shippingInfo";
+import { TPaymentMethod } from "@/types/paymentMethod";
+import { TSingleProduct, TVariations } from "@/types/products/singleProduct";
+import TShippingCharges from "@/types/shippingCharge";
+import Image from "next/image";
+import { useEffect, useMemo } from "react";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { FaMinus, FaPlus } from "react-icons/fa";
+import { MdCall, MdErrorOutline, MdShoppingBag } from "react-icons/md";
+
+type TCheckoutFormData = {
+  shipping: TShippingInfo;
+  paymentMethod: string;
+  paymentDetails?: Record<string, string | number>;
+};
+
+type TCartItem = {
+  productId: string;
+  variation: TVariations | null;
+  quantity: number;
+};
+
+type Props = {
+  lpNo: string;
+  shippingCharges: TShippingCharges[];
+  paymentMethods: TPaymentMethod[];
+  productTitle: string;
+  cartItems: TCartItem[];
+  fallbackPrice?: number;
+  thumbnailSrc?: string;
+  quantity: number;
+  setQuantity: React.Dispatch<React.SetStateAction<number>>;
+  bookDetails: {
+    title: string;
+    highlights: { icon: string; title: string; description: string }[];
+    pages: string | number;
+    scholars: string | number;
+    testimonials: unknown[];
+  };
+  product: TSingleProduct | null;
+  salePrice: number;
+  regularPrice: number;
+  /** Fired (repeatedly — caller de-dupes) once name + a valid phone are entered. Used for initiate_checkout. */
+  // eslint-disable-next-line no-unused-vars
+  onCheckoutStart?: (customer: TCheckoutCustomer) => void;
+  /** Variable products only — leave empty for simple products. */
+  variations?: TVariations[];
+  selectedVariation?: TVariations | null;
+  // eslint-disable-next-line no-unused-vars
+  onVariationChange?: (variation: TVariations) => void;
+  isInStock?: boolean;
+};
+
+const SalesOrderForm = ({
+  lpNo,
+  shippingCharges,
+  paymentMethods,
+  productTitle,
+  cartItems,
+  fallbackPrice = 0,
+  thumbnailSrc,
+  quantity,
+  setQuantity,
+  bookDetails,
+  product,
+  salePrice,
+  regularPrice,
+  onCheckoutStart,
+  variations = [],
+  selectedVariation = null,
+  onVariationChange,
+  isInStock = true,
+}: Props) => {
+  const methods = useForm<TCheckoutFormData>({ mode: "all" });
+
+  const totalCost = useMemo(() => {
+    if (cartItems.length === 0) return fallbackPrice || salePrice;
+    return cartItems.reduce((acc, item) => {
+      const price =
+        item.variation?.price?.salePrice ||
+        item.variation?.price?.regularPrice ||
+        salePrice ||
+        fallbackPrice;
+      return acc + price * item.quantity;
+    }, 0);
+  }, [cartItems, fallbackPrice, salePrice]);
+
+  const { calculatedTotal } = useCheckoutLogic({
+    totalCost,
+  });
+
+  const orderedProducts = useMemo(() => {
+    return cartItems.map((item) => ({
+      product: item.productId,
+      variation: item.variation?._id,
+      quantity: item.quantity,
+    }));
+  }, [cartItems]);
+
+  const {
+    handlePlaceOrder,
+    isLoading,
+    errorMessages,
+    isSuccess,
+    limitModalStatus,
+    setLimitModalStatus,
+  } = useSalesOrderSubmit({
+    paymentMethods,
+    totalCost,
+    orderedProducts,
+    lpNo: lpNo,
+    productName: product?.title || productTitle,
+    productCategory: product?.category?.[0]?.name,
+    productBrand: product?.brand?.name,
+    productVariant: getVariantLabel(selectedVariation),
+    unitPrice: salePrice || fallbackPrice,
+  });
+
+  const hasVariations = variations.length > 0 && !!onVariationChange;
+  const variantLabel = getVariantLabel(selectedVariation);
+
+  // Same rules as the main product page — never let an invalid line item reach the order API
+  const blockReason =
+    hasVariations && !selectedVariation
+      ? "অনুগ্রহ করে একটি ভেরিয়েন্ট বেছে নিন"
+      : !isInStock
+        ? "দুঃখিত, নির্বাচিত পণ্যটি এখন স্টকে নেই"
+        : undefined;
+
+  const onSubmit = (data: TCheckoutFormData) => {
+    if (blockReason) return;
+    return handlePlaceOrder(data);
+  };
+
+  const shippingValues = useWatch({
+    control: methods.control,
+    name: "shipping",
+  });
+  const { fullName, phoneNumber, email } = shippingValues || {};
+
+  // Same rule as the main checkout: customer has started checkout once name + valid phone exist
+  useEffect(() => {
+    if (!onCheckoutStart || !fullName?.trim() || !isValidBdPhone(phoneNumber))
+      return;
+
+    onCheckoutStart({ fullName, phoneNumber, email });
+  }, [onCheckoutStart, fullName, phoneNumber, email]);
+
+  const actualThumbnail = getImageSrc(thumbnailSrc || product?.thumbnail?.src);
+
+  return (
+    <>
+      <FormProvider {...methods}>
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start"
+        >
+          {/* Left Column: Form Inputs */}
+          <div className="space-y-2">
+            {/* Shipping Info */}
+            <div className="bg-background rounded-xl overflow-hidden border border-border shadow-sm">
+              <ShippingAddress disablePhoneAutoFill={true} />
+            </div>
+            {/* Payment Methods */}
+            <div className="bg-background rounded-xl overflow-hidden border border-border shadow-sm p-4 md:p-0">
+              <PaymentMethods
+                paymentMethods={paymentMethods}
+                idPrefix="sales-payment"
+              />
+            </div>
+          </div>
+
+          {/* Right Column: Summary & Final Action */}
+          <div className="space-y-4 lg:sticky lg:top-24">
+            <div className="bg-background p-4 lg:p-5 rounded-[2rem] border border-success/20 shadow-xl shadow-emerald-900/5 relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full -mr-12 -mt-12 blur-2xl group-hover:bg-primary/10 transition-colors"></div>
+
+              <h3 className="text-lg lg:text-xl font-black mb-3 flex items-center gap-3 text-foreground relative z-10">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <MdShoppingBag className="text-primary text-xl" />
+                </div>
+                আপনার অর্ডার
+              </h3>
+
+              <div className="flex gap-4 mb-4 relative z-10">
+                <div className="w-20 h-28 bg-muted rounded-xl overflow-hidden flex-shrink-0 shadow-md border border-border p-0.5">
+                  <Image
+                    src={actualThumbnail ?? "/placeholder.webp"}
+                    alt={product?.title || bookDetails.title || "প্রোডাক্ট"}
+                    width={80}
+                    height={112}
+                    className="w-full h-full object-cover rounded-lg"
+                    unoptimized
+                  />
+                </div>
+                <div className="flex-grow py-1 space-y-2">
+                  <h4 className="font-black text-foreground text-sm lg:text-base leading-[1.3] lg:leading-tight">
+                    {product?.title || bookDetails.title}
+                  </h4>
+                  {variantLabel && (
+                    <p className="text-xs font-semibold text-muted-foreground">
+                      {variantLabel}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-primary font-bold italic">
+                      বিশেষ মূল্যছাড়!
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-muted-foreground font-black uppercase tracking-widest">
+                      পরিমাণ:
+                    </span>
+                    <div className="flex items-center border border-primary/10 rounded-lg overflow-hidden bg-background shadow-sm ring-1 ring-primary/5">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                        className="w-8 h-8 flex items-center justify-center hover:bg-success/10 text-muted-foreground transition-colors border-r border-primary/5"
+                      >
+                        <FaMinus className="text-[10px]" />
+                      </button>
+                      <span className="w-10 text-center text-sm font-black text-primary">
+                        {quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity((q) => q + 1)}
+                        className="w-8 h-8 flex items-center justify-center hover:bg-success/10 text-muted-foreground transition-colors border-l border-primary/5"
+                      >
+                        <FaPlus className="text-[10px]" />
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <p className="text-primary font-black text-2xl lg:text-3xl">
+                      &#2547;{salePrice * quantity}
+                    </p>
+                    {regularPrice > salePrice && (
+                      <span className="text-base text-muted-foreground line-through font-bold">
+                        &#2547;{regularPrice * quantity}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              {/* Variation picker (variable products only) */}
+              {hasVariations && (
+                <div className="relative z-10 mb-4 rounded-xl border border-border bg-muted/40 px-3 py-1">
+                  <VariationSelector
+                    variations={variations}
+                    initialPrice={{ regularPrice, salePrice }}
+                    onVariationChange={onVariationChange}
+                  />
+                </div>
+              )}
+
+              {/* Shipping Area */}
+              <SelectShippingArea shippingCharges={shippingCharges} />
+            </div>
+
+            {/* Errors */}
+            {(errorMessages.length > 0 ||
+              Object.keys(methods.formState.errors).length > 0) && (
+              <div className="p-4 bg-destructive/10 border border-destructive/25 rounded-2xl space-y-2 shadow-sm animate-shake">
+                {errorMessages.map((message, i) => (
+                  <div
+                    key={i}
+                    className="flex gap-2 items-start text-destructive font-bold text-sm"
+                  >
+                    <MdErrorOutline className="text-lg flex-shrink-0 mt-0.5" />
+                    <ErrorMessage
+                      message={message}
+                      className="!mt-0 !text-destructive font-bold text-sm"
+                    />
+                  </div>
+                ))}
+                {Object.keys(methods.formState.errors).length > 0 && (
+                  <div className="flex gap-2 items-start text-destructive font-bold text-sm">
+                    <MdErrorOutline className="text-lg flex-shrink-0 mt-0.5" />
+                    <span>অনুগ্রহ করে সব তথ্য সঠিকভাবে পূরণ করুন।</span>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <div className="space-y-3">
+              {blockReason && (
+                <p className="flex items-center justify-center gap-2 text-sm font-bold text-destructive">
+                  <MdErrorOutline className="text-lg" />
+                  {blockReason}
+                </p>
+              )}
+              <EcButton
+                className="w-full py-6 text-xl lg:text-2xl font-black bg-primary hover:bg-primary/95 text-primary-foreground rounded-full transition-all shadow-[0_15px_35px_-5px_hsla(var(--primary)/0.4)] active:scale-[0.98] relative overflow-hidden group"
+                type="submit"
+                loading={isLoading || isSuccess}
+                disabled={isLoading || isSuccess || !!blockReason}
+                loadingText="অর্ডার প্রসেস হচ্ছে..."
+              >
+                <span className="relative z-10">
+                  অর্ডার কনফার্ম করুন — &#2547;{calculatedTotal}
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-shimmer"></div>
+              </EcButton>
+            </div>
+
+            {/* Help Box */}
+            <div className="bg-primary/5 border border-primary/10 p-4 rounded-[2rem] text-primary relative overflow-hidden group">
+              <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-primary/5 rounded-full blur-xl group-hover:bg-primary/10 transition-colors"></div>
+
+              <div className="relative z-10 text-center">
+                <h4 className="font-black text-lg mb-0.5 flex items-center justify-center gap-2 text-primary">
+                  <MdCall /> সরাসরি কথা বলুন
+                </h4>
+                <p className="text-sm font-bold text-muted-foreground mb-4 px-4 leading-relaxed">
+                  অর্ডার করতে সমস্যা হলে নিচের নম্বরে কল করুন
+                </p>
+                <a
+                  href="tel:+8801744675030"
+                  className="inline-flex items-center justify-center gap-3 bg-background text-primary font-black px-8 py-3 rounded-xl border border-primary/10 shadow-lg hover:shadow-xl hover:bg-muted transition-all text-lg lg:text-xl"
+                >
+                  +8801744675030
+                </a>
+              </div>
+            </div>
+          </div>
+        </form>
+      </FormProvider>
+
+      <OrderLimit
+        limitModalStatus={limitModalStatus}
+        setLimitModalStatus={setLimitModalStatus}
+      />
+    </>
+  );
+};
+
+export default SalesOrderForm;
