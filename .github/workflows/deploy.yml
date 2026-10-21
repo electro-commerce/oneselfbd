@@ -219,7 +219,7 @@ jobs:
 
             echo "Pulling prebuilt images..."
             docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d --no-build --remove-orphans
+            docker compose -f docker-compose.prod.yml up -d --no-build --remove-orphans --wait --wait-timeout 120
 
             # Save the deployed image selection for subsequent manual Compose commands.
             printf 'IMAGE_REPOSITORY=%s\nIMAGE_TAG=%s\n' "$IMAGE_REPOSITORY" "$IMAGE_TAG" > .env.images

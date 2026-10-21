@@ -4,6 +4,9 @@ services:
   server:
     image: ${IMAGE_REPOSITORY:?Set IMAGE_REPOSITORY to ghcr.io/owner/repo}-server:${IMAGE_TAG:?Set IMAGE_TAG to the deployed commit SHA}
     container_name: oneself-server-prod
+    # Pass the complete VPS runtime configuration to Express, including optional services.
+    env_file:
+      - .env
     restart: always
     ports:
       - "127.0.0.1:5000:5000"
@@ -15,10 +18,22 @@ services:
       MONGODB_URI: ${MONGODB_URI:-${DB_URL:-mongodb://host.docker.internal:27017/oneself}}
       DB_URL: ${DB_URL:-${MONGODB_URI:-mongodb://host.docker.internal:27017/oneself}}
       CLIENT_SIDE_URL: https://${DOMAIN_NAME:-localhost}
-      MAIN_DOMAIN: https://${DOMAIN_NAME:-localhost}
+      MAIN_DOMAIN: ${MAIN_DOMAIN:-${DOMAIN_NAME:-localhost}}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
       UPLOAD_PLATFORM: ${UPLOAD_PLATFORM:-local}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:5000/server-api').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))",
+        ]
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
     volumes:
       - server_uploads:/app/apps/server/uploads
     networks:
