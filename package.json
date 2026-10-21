@@ -12,7 +12,7 @@
     "dev:front": "turbo run dev --filter=oneself-front",
     "dev:dashboard": "turbo run dev --filter=oneself-dashboard",
     "dev:server": "turbo run dev --filter=oneself-server",
-    "build": "turbo run build",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=4096\" turbo run build --concurrency=1",
     "start": "turbo run start",
     "lint": "turbo run lint",
     "lint:root": "eslint . --ext .js,.cjs,.mjs,.ts --no-error-on-unmatched-pattern",
