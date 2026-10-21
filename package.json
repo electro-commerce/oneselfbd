@@ -1,0 +1,34 @@
+{
+  "name": "oneself",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=20.19.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:front": "turbo run dev --filter=oneself-front",
+    "dev:dashboard": "turbo run dev --filter=oneself-dashboard",
+    "dev:server": "turbo run dev --filter=oneself-server",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "lint:root": "eslint . --ext .js,.cjs,.mjs,.ts --no-error-on-unmatched-pattern",
+    "lint:all": "turbo run lint && pnpm lint:root",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,json,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,json,md}\""
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.20.0",
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "prettier": "^3.4.2",
+    "turbo": "^2.4.0",
+    "typescript": "^5.8.2"
+  }
+}
