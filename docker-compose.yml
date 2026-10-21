@@ -17,7 +17,7 @@ services:
       MONGODB_URI: ${MONGODB_URI:-mongodb://host.docker.internal:27017/your_database}
       DB_URL: ${DB_URL:-${MONGODB_URI:-mongodb://host.docker.internal:27017/your_database}}
       CLIENT_SIDE_URL: ${CLIENT_SIDE_URL:-http://localhost:3000}
-      MAIN_DOMAIN: ${MAIN_DOMAIN:-http://localhost:3000}
+      MAIN_DOMAIN: ${MAIN_DOMAIN:-localhost}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET:-oneself_dev_access_token_secret_key_12345}
       REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET:-oneself_dev_refresh_token_secret_key_12345}
       UPLOAD_PLATFORM: ${UPLOAD_PLATFORM:-local}
