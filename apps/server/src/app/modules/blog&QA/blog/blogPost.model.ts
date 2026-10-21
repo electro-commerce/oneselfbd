@@ -1,0 +1,80 @@
+import { Schema, model } from "mongoose";
+import { TBlogPost, TBlogPostModel } from "./blogPost.interface";
+
+const blogPostSchema = new Schema<TBlogPost, TBlogPostModel>(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+      lowercase: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    excerpt: {
+      type: String,
+    },
+    readTime: {
+      type: Number,
+    },
+    category: {
+      type: Schema.Types.ObjectId,
+      ref: "BlogQACategory",
+      required: true,
+    },
+    topic: {
+      type: Schema.Types.ObjectId,
+      ref: "BlogQATopic",
+      required: true,
+    },
+    tags: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "BlogQATag",
+      },
+    ],
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    featuredImage: {
+      type: Schema.Types.ObjectId,
+      ref: "Image",
+    },
+    relatedBlogs: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "BlogPost",
+      },
+    ],
+    seo: { type: Schema.Types.ObjectId, ref: "Seo" },
+    status: {
+      type: String,
+      enum: ["draft", "published", "archived"],
+      default: "draft",
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
+    publishedAt: {
+      type: Date,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
+
+export const BlogPost = model<TBlogPost, TBlogPostModel>(
+  "BlogPost",
+  blogPostSchema
+);

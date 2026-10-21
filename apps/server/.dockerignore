@@ -1,0 +1,6 @@
+.cursor
+.husky
+.vscode
+node_modules
+uploads
+dist
