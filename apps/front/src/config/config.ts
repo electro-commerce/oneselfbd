@@ -2,7 +2,7 @@ const config = {
   env: process.env.NEXT_PUBLIC_FRONT_NODE_ENV || "development",
   api_base_url:
     process.env.NEXT_PUBLIC_FRONT_API_BASE_URL || "http://localhost:5000",
-  revalidate_secret: process.env.REVALIDATE_SECRET || "123456",
+  revalidate_secret: process.env.REVALIDATE_SECRET || "",
   tracking_api_url:
     process.env.NEXT_PUBLIC_FRONT_TRACKING_API_URL ||
     "http://localhost:5001/api/v1/events",

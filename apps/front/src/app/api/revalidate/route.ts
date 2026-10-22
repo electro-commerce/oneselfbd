@@ -1,5 +1,5 @@
 import config from "@/config/config";
-import { revalidateTag } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = (req: NextRequest) => {
@@ -16,7 +16,7 @@ export const GET = (req: NextRequest) => {
       );
     }
 
-    if (secret !== config.revalidate_secret) {
+    if (!config.revalidate_secret || secret !== config.revalidate_secret) {
       return NextResponse.json(
         { status: "ERROR", message: "Revalidate secret doesn't match." },
         { status: 401 }
@@ -37,7 +37,7 @@ export const GET = (req: NextRequest) => {
     });
 
     return NextResponse.json(
-      { status: "OK", revalidated: tags, secret },
+      { status: "OK", revalidated: tags },
       { status: 200 }
     );
   } catch (error) {
@@ -47,3 +47,38 @@ export const GET = (req: NextRequest) => {
     );
   }
 };
+
+// Full invalidation is only available through a server-to-server POST.
+export async function POST(req: NextRequest) {
+  const secret = process.env.REVALIDATE_SECRET;
+  if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+  try {
+    const body = await req.json();
+    if (body.all === true) {
+      revalidatePath("/", "layout");
+    } else if (
+      Array.isArray(body.tags) &&
+      body.tags.length > 0 &&
+      body.tags.length <= 100 &&
+      body.tags.every(
+        (tag: unknown) =>
+          typeof tag === "string" && tag.length > 0 && tag.length <= 256
+      )
+    ) {
+      body.tags.forEach((tag: string) => revalidateTag(tag));
+    } else {
+      return NextResponse.json(
+        { message: "Provide all: true or valid tags." },
+        { status: 400 }
+      );
+    }
+    return NextResponse.json({ revalidated: true });
+  } catch {
+    return NextResponse.json(
+      { message: "Cache revalidation failed." },
+      { status: 500 }
+    );
+  }
+}
