@@ -224,8 +224,11 @@ jobs:
             # Save the deployed image selection for subsequent manual Compose commands.
             printf 'IMAGE_REPOSITORY=%s\nIMAGE_TAG=%s\n' "$IMAGE_REPOSITORY" "$IMAGE_TAG" > .env.images
 
-            echo "Pruning dangling images..."
-            docker image prune -f --filter "until=24h"
+            # Run only after the updated stack passes Compose's readiness checks.
+            # Commit-tagged images need --all; dangling-only pruning retains them.
+            # Docker retains images referenced by existing containers.
+            echo "Removing unused Docker images..."
+            docker image prune --all --force
 
             echo "=== Deployment Successfully Completed ==="
             docker compose -f docker-compose.prod.yml ps
