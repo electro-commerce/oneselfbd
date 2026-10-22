@@ -1,6 +1,41 @@
 name: oneself-prod
 
 services:
+  mongodb:
+    image: mongo:8.0
+    container_name: oneself-mongodb-prod
+    restart: always
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    # No published port: only the API shares this private database network.
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - database_network
+    healthcheck:
+      test:
+        - CMD
+        - mongosh
+        - --quiet
+        - --eval
+        - "quit(db.hello().isWritablePrimary ? 0 : 1)"
+      interval: 5s
+      timeout: 10s
+      start_period: 15s
+      retries: 120
+
+  mongodb-init:
+    image: mongo:8.0
+    restart: "no"
+    entrypoint: ["mongosh", "--nodb", "--quiet", "/scripts/init-replica-set.js"]
+    volumes:
+      - ./mongodb/init-replica-set.js:/scripts/init-replica-set.js:ro
+    networks:
+      - database_network
+    depends_on:
+      mongodb:
+        condition: service_started
+
   server:
     image: ${IMAGE_REPOSITORY:?Set IMAGE_REPOSITORY to ghcr.io/owner/repo}-server:${IMAGE_TAG:?Set IMAGE_TAG to the deployed commit SHA}
     container_name: oneself-server-prod
@@ -10,13 +45,14 @@ services:
     restart: always
     ports:
       - "127.0.0.1:5000:5000"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      mongodb-init:
+        condition: service_completed_successfully
     environment:
       NODE_ENV: production
       PORT: 5000
-      MONGODB_URI: ${MONGODB_URI:-${DB_URL:-mongodb://host.docker.internal:27017/oneself}}
-      DB_URL: ${DB_URL:-${MONGODB_URI:-mongodb://host.docker.internal:27017/oneself}}
+      MONGODB_URI: mongodb://mongodb:27017/oneself?replicaSet=rs0
+      DB_URL: mongodb://mongodb:27017/oneself?replicaSet=rs0
       CLIENT_SIDE_URL: https://${DOMAIN_NAME:-localhost}
       MAIN_DOMAIN: ${MAIN_DOMAIN:-${DOMAIN_NAME:-localhost}}
       ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
@@ -38,6 +74,7 @@ services:
       - server_uploads:/app/apps/server/uploads
     networks:
       - oneself_network
+      - database_network
 
   front:
     image: ${IMAGE_REPOSITORY:?Set IMAGE_REPOSITORY to ghcr.io/owner/repo}-front:${IMAGE_TAG:?Set IMAGE_TAG to the deployed commit SHA}
@@ -48,6 +85,7 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3000
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET:?Set a strong REVALIDATE_SECRET in .env}
     depends_on:
       - server
     networks:
@@ -62,14 +100,21 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3001
+      REVALIDATE_SECRET: ${REVALIDATE_SECRET:?Set a strong REVALIDATE_SECRET in .env}
+      STOREFRONT_INTERNAL_URL: http://front:3000
+      API_INTERNAL_URL: http://server:5000/server-api/v1
     depends_on:
       - server
     networks:
       - oneself_network
 
 volumes:
+  mongodb_data:
+  mongodb_config:
   server_uploads:
 
 networks:
+  database_network:
+    internal: true
   oneself_network:
     driver: bridge

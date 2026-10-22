@@ -1,5 +1,3 @@
-import config from "@/config/config";
-
 export type TTags =
   | "products"
   | `product-${string}`
@@ -24,17 +22,29 @@ export type TTags =
   | "blogQaCategories"
   | "blogQaTags";
 
-export const revalidateTag = async (tag: TTags | TTags[]) => {
-  let tags: string;
-  if (Array.isArray(tag)) {
-    tags = tag.map((t) => decodeURIComponent(t)).join(",");
-  } else {
-    tags = decodeURIComponent(tag);
+async function requestRevalidation(
+  body: { all: true } | { tags: string[] },
+  token?: string | null
+) {
+  const response = await fetch("/api/revalidate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-revalidate-request": "1",
+      ...(token ? { authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+  if (!response.ok) {
+    const result = await response.json();
+    throw new Error(result.message || "Storefront cache revalidation failed.");
   }
+}
 
-  const url = `${config.client_base_url}/api/revalidate?key=${encodeURI(
-    tags
-  )}&secret=${config.revalidate_secret}`;
+export const revalidateTag = async (tag: TTags | TTags[]) =>
+  requestRevalidation({
+    tags: (Array.isArray(tag) ? tag : [tag]).map((t) => decodeURIComponent(t)),
+  });
 
-  await fetch(url);
-};
+export const revalidateStorefront = async (token?: string | null) =>
+  requestRevalidation({ all: true }, token);

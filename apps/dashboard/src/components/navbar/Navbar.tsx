@@ -1,5 +1,6 @@
 "use client";
 
+import RevalidateStorefrontButton from "./RevalidateStorefrontButton";
 import UserMenu from "../userMenu/UserMenu";
 import NavbarLogo from "./NavbarLogo";
 import SidebarToggle from "./SidebarToggle";
@@ -11,7 +12,8 @@ const Navbar = () => {
         <NavbarLogo />
         <SidebarToggle />
       </div>
-      <div className="relative shrink-0">
+      <div className="relative flex shrink-0 items-center gap-3">
+        <RevalidateStorefrontButton />
         <UserMenu />
       </div>
     </header>
