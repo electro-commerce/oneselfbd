@@ -132,6 +132,7 @@ test("tag revalidation preserves dynamic product tags and rejects invalid payloa
 });
 test("dashboard rejects form submissions and unauthenticated requests before fetch", async () => {
   const route = loadRoute(dashboard, {
+    env: { REVALIDATE_SECRET: "secret" },
     fetch: () => {
       throw new Error("Must not call API");
     },
@@ -148,7 +149,7 @@ test("dashboard rejects invalid tokens and customer profiles", async () => {
     { ok: false },
     { ok: true, json: async () => ({ data: { role: "customer" } }) },
   ]) {
-    const route = loadRoute(dashboard, { fetch: async () => profile });
+    const route = loadRoute(dashboard, { env: { REVALIDATE_SECRET: "secret" }, fetch: async () => profile });
     const result = await route.POST(
       request(
         { all: true },
@@ -215,4 +216,37 @@ test("dashboard reports storefront failures instead of false success", async () 
     ).status,
     502
   );
+});
+
+test("dashboard public secret revalidates without a login cookie or profile request", async () => {
+  for (const env of [
+    { NEXT_PUBLIC_REVALIDATE_SECRET: "shared-secret" },
+    { REVALIDATE_SECRET: "shared-secret", NEXT_PUBLIC_REVALIDATE_SECRET: "shared-secret" },
+  ]) {
+    const calls = [];
+    const route = loadRoute(dashboard, {
+      env,
+      fetch: async (url, options) => {
+        calls.push({ url, options });
+        return { ok: true };
+      },
+    });
+    const result = await route.POST(request({ tags: ["products"] }, {
+      "x-revalidate-request": "1",
+      "x-revalidate-secret": "shared-secret",
+    }));
+    assert.equal(result.status, 200);
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0].options.headers.authorization, "Bearer shared-secret");
+    assert.deepEqual(JSON.parse(calls[0].options.body), { tags: ["products"] });
+  }
+});
+test("dashboard rejects a wrong public secret without a login", async () => {
+  const route = loadRoute(dashboard, {
+    env: { NEXT_PUBLIC_REVALIDATE_SECRET: "secret" },
+    fetch: () => { throw new Error("Must not forward"); },
+  });
+  assert.equal((await route.POST(request({ all: true }, {
+    "x-revalidate-request": "1", "x-revalidate-secret": "wrong",
+  }))).status, 401);
 });
