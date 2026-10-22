@@ -250,3 +250,23 @@ test("dashboard rejects a wrong public secret without a login", async () => {
     "x-revalidate-request": "1", "x-revalidate-secret": "wrong",
   }))).status, 401);
 });
+
+// Browser fetch does not automatically prepend the Next.js basePath.
+test("dashboard client sends tag and full invalidation to its /admin API route", async () => {
+  const calls = [];
+  const client = loadRoute("apps/dashboard/src/utilities/revalidate.ts", {
+    env: { NEXT_PUBLIC_REVALIDATE_SECRET: "shared-secret" },
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      return { ok: true };
+    },
+  });
+  await client.revalidateTag(["products", "product-example"]);
+  await client.revalidateStorefront();
+  for (const call of calls) {
+    assert.equal(call.url, "/admin/api/revalidate");
+    assert.equal(call.options.headers["x-revalidate-secret"], "shared-secret");
+  }
+  assert.deepEqual(JSON.parse(calls[0].options.body), { tags: ["products", "product-example"] });
+  assert.deepEqual(JSON.parse(calls[1].options.body), { all: true });
+});

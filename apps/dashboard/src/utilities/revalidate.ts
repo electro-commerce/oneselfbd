@@ -26,7 +26,7 @@ async function requestRevalidation(
   body: { all: true } | { tags: string[] },
   token?: string | null
 ) {
-  const response = await fetch("/api/revalidate", {
+  const response = await fetch("/admin/api/revalidate", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
