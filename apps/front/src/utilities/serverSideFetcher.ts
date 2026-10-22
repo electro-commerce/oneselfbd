@@ -51,7 +51,12 @@ const serverSideFetcher = async <T>({
     config.env === "development" ? "no-store" : "force-cache";
   const reqConfig = {
     cache: cache || defaultCache,
-    next: { tags, ...(revalidate ? { revalidate } : {}) },
+    next: {
+      tags: /^\/products(?:[/?]|$)|^\/homepage-sections\/content\//.test(url)
+        ? Array.from(new Set([...tags, "products"]))
+        : tags,
+      ...(revalidate ? { revalidate } : {}),
+    },
   };
 
   if (Object.keys(params || {}).length) {

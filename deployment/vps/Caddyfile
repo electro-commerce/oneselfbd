@@ -4,6 +4,16 @@
 
 # Customer Storefront & Shared Reverse Proxy
 {$DOMAIN_NAME:localhost} {
+  # Next.js owns cache invalidation; never send it to Express.
+  handle /api/revalidate {
+    reverse_proxy front:3000
+  }
+
+  @dashboard path /admin /admin/*
+  handle @dashboard {
+    reverse_proxy dashboard:3001
+  }
+
   # Forward API routes to Express Server
   handle /api/* {
     reverse_proxy server:5000
@@ -31,6 +41,10 @@
 
 # Admin & Operations Dashboard (Subdomain)
 {$DASHBOARD_DOMAIN:admin.localhost} {
+  handle /api/revalidate {
+    reverse_proxy front:3000
+  }
+
   # API proxy for dashboard requests
   handle /api/* {
     reverse_proxy server:5000

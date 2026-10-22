@@ -39,6 +39,7 @@ function loadRoute(file, { env = {}, fetch, invalidate = () => {} } = {}) {
             revalidate_secret: env.REVALIDATE_SECRET,
           },
         };
+      if (name === "./formatParams") return { default: () => "" };
       if (name === "@/const/role")
         return {
           ROLES: { SUPER_ADMIN: "superAdmin", ADMIN: "admin", STAFF: "staff" },
@@ -149,7 +150,10 @@ test("dashboard rejects invalid tokens and customer profiles", async () => {
     { ok: false },
     { ok: true, json: async () => ({ data: { role: "customer" } }) },
   ]) {
-    const route = loadRoute(dashboard, { env: { REVALIDATE_SECRET: "secret" }, fetch: async () => profile });
+    const route = loadRoute(dashboard, {
+      env: { REVALIDATE_SECRET: "secret" },
+      fetch: async () => profile,
+    });
     const result = await route.POST(
       request(
         { all: true },
@@ -221,7 +225,10 @@ test("dashboard reports storefront failures instead of false success", async () 
 test("dashboard public secret revalidates without a login cookie or profile request", async () => {
   for (const env of [
     { NEXT_PUBLIC_REVALIDATE_SECRET: "shared-secret" },
-    { REVALIDATE_SECRET: "shared-secret", NEXT_PUBLIC_REVALIDATE_SECRET: "shared-secret" },
+    {
+      REVALIDATE_SECRET: "shared-secret",
+      NEXT_PUBLIC_REVALIDATE_SECRET: "shared-secret",
+    },
   ]) {
     const calls = [];
     const route = loadRoute(dashboard, {
@@ -231,42 +238,105 @@ test("dashboard public secret revalidates without a login cookie or profile requ
         return { ok: true };
       },
     });
-    const result = await route.POST(request({ tags: ["products"] }, {
-      "x-revalidate-request": "1",
-      "x-revalidate-secret": "shared-secret",
-    }));
+    const result = await route.POST(
+      request(
+        { tags: ["products"] },
+        {
+          "x-revalidate-request": "1",
+          "x-revalidate-secret": "shared-secret",
+        }
+      )
+    );
     assert.equal(result.status, 200);
     assert.equal(calls.length, 1);
-    assert.equal(calls[0].options.headers.authorization, "Bearer shared-secret");
+    assert.equal(
+      calls[0].options.headers.authorization,
+      "Bearer shared-secret"
+    );
     assert.deepEqual(JSON.parse(calls[0].options.body), { tags: ["products"] });
   }
 });
 test("dashboard rejects a wrong public secret without a login", async () => {
   const route = loadRoute(dashboard, {
     env: { NEXT_PUBLIC_REVALIDATE_SECRET: "secret" },
-    fetch: () => { throw new Error("Must not forward"); },
+    fetch: () => {
+      throw new Error("Must not forward");
+    },
   });
-  assert.equal((await route.POST(request({ all: true }, {
-    "x-revalidate-request": "1", "x-revalidate-secret": "wrong",
-  }))).status, 401);
+  assert.equal(
+    (
+      await route.POST(
+        request(
+          { all: true },
+          {
+            "x-revalidate-request": "1",
+            "x-revalidate-secret": "wrong",
+          }
+        )
+      )
+    ).status,
+    401
+  );
 });
 
-// Browser fetch does not automatically prepend the Next.js basePath.
-test("dashboard client sends tag and full invalidation to its /admin API route", async () => {
+test("dashboard browser directly invalidates storefront product caches and root layout", async () => {
   const calls = [];
+  const invalidations = [];
+  const storefront = loadRoute(front, {
+    env: { REVALIDATE_SECRET: "shared-secret" },
+    invalidate: (...args) => invalidations.push(args),
+  });
   const client = loadRoute("apps/dashboard/src/utilities/revalidate.ts", {
     env: { NEXT_PUBLIC_REVALIDATE_SECRET: "shared-secret" },
     fetch: async (url, options) => {
       calls.push({ url, options });
-      return { ok: true };
+      const result = await storefront.POST(
+        request(JSON.parse(options.body), options.headers)
+      );
+      return {
+        ok: result.status === 200,
+        status: result.status,
+        json: async () => result.body,
+      };
     },
   });
-  await client.revalidateTag(["products", "product-example"]);
+  await client.revalidateTag("product-example");
   await client.revalidateStorefront();
   for (const call of calls) {
-    assert.equal(call.url, "/admin/api/revalidate");
-    assert.equal(call.options.headers["x-revalidate-secret"], "shared-secret");
+    assert.equal(call.url, "http://front/api/revalidate");
+    assert.equal(call.options.headers.authorization, "Bearer shared-secret");
   }
-  assert.deepEqual(JSON.parse(calls[0].options.body), { tags: ["products", "product-example"] });
-  assert.deepEqual(JSON.parse(calls[1].options.body), { all: true });
+  assert.ok(
+    invalidations.some(([type, tag]) => type === "tag" && tag === "products")
+  );
+  assert.ok(
+    invalidations.some(
+      ([type, tag]) => type === "tag" && tag === "homepageIndividualSection"
+    )
+  );
+  assert.deepEqual(invalidations.at(-1), ["path", "/", "layout"]);
+});
+
+test("every product fetch shares the products tag while preserving specific tags", async () => {
+  const calls = [];
+  const fetcher = loadRoute("apps/front/src/utilities/serverSideFetcher.ts", {
+    fetch: async (url, options) => {
+      calls.push({ url, options });
+      return { ok: true, json: async () => ({ success: true, data: [] }) };
+    },
+  }).default;
+  for (const url of [
+    "/products/example",
+    "/products/related-products/other",
+    "/products?limit=10",
+    "/homepage-sections/content/123",
+  ]) {
+    await fetcher({ url, tags: ["featuredProducts"] });
+    assert.deepEqual(Array.from(calls.at(-1).options.next.tags), [
+      "featuredProducts",
+      "products",
+    ]);
+  }
+  await fetcher({ url: "/categories", tags: ["categories"] });
+  assert.deepEqual(Array.from(calls.at(-1).options.next.tags), ["categories"]);
 });
