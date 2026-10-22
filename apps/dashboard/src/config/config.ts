@@ -4,7 +4,6 @@ const config = {
   main_domain: process.env.NEXT_PUBLIC_MAIN_DOMAIN || "",
   client_base_url:
     process.env.NEXT_PUBLIC_CLIENT_BASE_URL || "http://localhost:3000",
-  revalidate_secret: process.env.NEXT_PUBLIC_REVALIDATE_SECRET || "",
   courier_status_check_url:
     process.env.NEXT_PUBLIC_COURIER_STATUS_CHECK_URL ||
     "https://steadfast.com.bd/t",
