@@ -31,6 +31,9 @@ async function requestRevalidation(
     headers: {
       "Content-Type": "application/json",
       "x-revalidate-request": "1",
+      ...(process.env.NEXT_PUBLIC_REVALIDATE_SECRET
+        ? { "x-revalidate-secret": process.env.NEXT_PUBLIC_REVALIDATE_SECRET }
+        : {}),
       ...(token ? { authorization: `Bearer ${token}` } : {}),
     },
     body: JSON.stringify(body),

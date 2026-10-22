@@ -7,46 +7,47 @@ export async function POST(req: NextRequest) {
   if (req.headers.get("x-revalidate-request") !== "1") {
     return NextResponse.json({ message: "Invalid request." }, { status: 403 });
   }
-  const authorization =
-    req.headers.get("authorization") ||
-    `Bearer ${req.cookies.get("_app.ec.at")?.value || ""}`;
-  if (authorization === "Bearer ") {
+  const secret =
+    process.env.REVALIDATE_SECRET || process.env.NEXT_PUBLIC_REVALIDATE_SECRET;
+  if (!secret) {
     return NextResponse.json(
-      { message: "Please sign in again." },
-      { status: 401 }
+      { message: "Cache revalidation is not configured." },
+      { status: 503 }
     );
   }
   try {
-    const apiUrl =
-      process.env.API_INTERNAL_URL ||
-      `${config.api_base_url.replace(/\/$/, "").replace(/\/server-api\/v1$/, "")}/server-api/v1`;
-    // Validate the token against the API; never trust a decoded JWT or UI guards.
-    const profileResponse = await fetch(`${apiUrl}/users/profile`, {
-      headers: { authorization },
-      cache: "no-store",
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!profileResponse.ok) {
-      return NextResponse.json(
-        { message: "Please sign in again." },
-        { status: 401 }
-      );
-    }
-    const profile = (await profileResponse.json()).data;
-    if (
-      ![ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.STAFF].includes(profile?.role)
-    ) {
-      return NextResponse.json(
-        { message: "Dashboard access required." },
-        { status: 403 }
-      );
-    }
-    const secret = process.env.REVALIDATE_SECRET;
-    if (!secret) {
-      return NextResponse.json(
-        { message: "Cache revalidation is not configured." },
-        { status: 503 }
-      );
+    // The dashboard may use its public shared secret without a login token.
+    if (req.headers.get("x-revalidate-secret") !== secret) {
+      const authorization =
+        req.headers.get("authorization") ||
+        `Bearer ${req.cookies.get("_app.ec.at")?.value || ""}`;
+      if (authorization === "Bearer ") {
+        return NextResponse.json(
+          { message: "Please sign in again." },
+          { status: 401 }
+        );
+      }
+      const apiUrl =
+        process.env.API_INTERNAL_URL ||
+        `${config.api_base_url.replace(/\/$/, "").replace(/\/server-api\/v1$/, "")}/server-api/v1`;
+      const profileResponse = await fetch(`${apiUrl}/users/profile`, {
+        headers: { authorization },
+        cache: "no-store",
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!profileResponse.ok) {
+        return NextResponse.json(
+          { message: "Please sign in again." },
+          { status: 401 }
+        );
+      }
+      const profile = (await profileResponse.json()).data;
+      if (![ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.STAFF].includes(profile?.role)) {
+        return NextResponse.json(
+          { message: "Dashboard access required." },
+          { status: 403 }
+        );
+      }
     }
     const body = await req.json();
     const response = await fetch(
