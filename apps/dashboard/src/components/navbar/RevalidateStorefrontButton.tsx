@@ -11,14 +11,14 @@ import { revalidateStorefront } from "@/utilities/revalidate";
 export default function RevalidateStorefrontButton() {
   const [pending, setPending] = useState(false);
   const { toast } = useToast();
-  const { token, user, profile } = useAppSelector((state) => state.auth);
+  const { user, profile } = useAppSelector((state) => state.auth);
   const role = profile?.role || user?.role;
   if (!role || role === ROLES.CUSTOMER) return null;
 
   const handleClick = async () => {
     setPending(true);
     try {
-      await revalidateStorefront(token);
+      await revalidateStorefront();
       toast({
         title: "Storefront cache revalidated",
         description: "Pages will load fresh data on their next visit.",

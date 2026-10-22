@@ -48,7 +48,7 @@ export const GET = (req: NextRequest) => {
   }
 };
 
-// Full invalidation is only available through a server-to-server POST.
+// Both the dashboard browser and internal deployment requests authenticate here.
 export async function POST(req: NextRequest) {
   const secret = process.env.REVALIDATE_SECRET;
   if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) {

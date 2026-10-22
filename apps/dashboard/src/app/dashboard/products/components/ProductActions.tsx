@@ -36,7 +36,7 @@ const ProductActions = ({ _id, slug }: { _id: string; slug: string }) => {
         className: "bg-success text-white text-2xl",
         title: "Product deleted successfully!",
       });
-      handleRevalidate(slug);
+      await handleRevalidate(slug);
     } catch (error) {
       toast({
         variant: "destructive",

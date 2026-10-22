@@ -51,7 +51,7 @@ const DeleteProductBtn = ({
         className: "bg-success text-white text-2xl",
         title: "The product deleted successfully!",
       });
-      handleRevalidate(slug);
+      await handleRevalidate(slug);
       router.push("/dashboard/products");
     } catch (error) {
       toast({
