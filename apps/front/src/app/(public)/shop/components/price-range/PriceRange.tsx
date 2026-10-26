@@ -30,11 +30,23 @@ const PriceRangeSlider: React.FC<PriceRangeSliderProps> = ({
   ]);
 
   useEffect(() => {
-    if (initialState[0] < min || initialState[1] === undefined) {
-      setInitialState([min, max]);
+    const currentMin = initialState?.[0] ?? min;
+    const currentMax = initialState?.[1] ?? max;
+
+    if (currentMin < min || initialState?.[1] === undefined || currentMax > max) {
+      const clampedMin = Math.max(min, currentMin);
+      const clampedMax = initialState?.[1] === undefined ? max : Math.min(max, currentMax);
+      setInitialState((prev) => {
+        if (prev[0] === clampedMin && prev[1] === clampedMax) return prev;
+        return [clampedMin, clampedMax];
+      });
     }
-    setInputValues(initialState);
-  }, [initialState, setInitialState, min, max]);
+
+    setInputValues((prev) => {
+      if (prev[0] === currentMin && prev[1] === currentMax) return prev;
+      return [currentMin, currentMax];
+    });
+  }, [initialState, min, max, setInitialState]);
 
   const handleChange = (newValues: number[]) => {
     setInputValues(newValues);
