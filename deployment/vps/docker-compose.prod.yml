@@ -108,6 +108,53 @@ services:
     networks:
       - oneself_network
 
+  gtm-preview:
+    image: gcr.io/cloud-tagging-10302018/gtm-cloud-image:stable
+    container_name: oneself-gtm-preview-prod
+    restart: always
+    ports:
+      - "127.0.0.1:${GTM_PREVIEW_PORT:-8081}:8080"
+    environment:
+      PORT: 8080
+      CONTAINER_CONFIG: ${GTM_CONTAINER_CONFIG:?Set GTM_CONTAINER_CONFIG in .env}
+      RUN_AS_PREVIEW_SERVER: "true"
+    healthcheck:
+      test:
+        - CMD
+        - /nodejs/bin/node
+        - /app/health_checker_bin.js
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 3
+    networks:
+      - oneself_network
+
+  gtm-server:
+    image: gcr.io/cloud-tagging-10302018/gtm-cloud-image:stable
+    container_name: oneself-gtm-server-prod
+    restart: always
+    ports:
+      - "127.0.0.1:${GTM_SERVER_PORT:-8080}:8080"
+    depends_on:
+      gtm-preview:
+        condition: service_started
+    environment:
+      PORT: 8080
+      CONTAINER_CONFIG: ${GTM_CONTAINER_CONFIG:?Set GTM_CONTAINER_CONFIG in .env}
+      PREVIEW_SERVER_URL: ${GTM_PREVIEW_SERVER_URL:-https://${GTM_PREVIEW_DOMAIN:-preview.tracking.${DOMAIN_NAME:-oneselfbd.com}}}
+    healthcheck:
+      test:
+        - CMD
+        - /nodejs/bin/node
+        - /app/health_checker_bin.js
+      interval: 10s
+      timeout: 5s
+      start_period: 20s
+      retries: 3
+    networks:
+      - oneself_network
+
 volumes:
   mongodb_data:
   mongodb_config:
