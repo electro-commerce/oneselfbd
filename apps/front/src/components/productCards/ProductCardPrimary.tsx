@@ -28,7 +28,7 @@ const ProductCardPrimary = ({
       )}
     >
       {product.discountPercent > 0 && (
-        <div className="absolute left-2.5 top-2.5 z-20 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold leading-none text-destructive-foreground shadow-sm">
+        <div className="pointer-events-none absolute left-2.5 top-2.5 z-20 rounded-full bg-destructive px-2 py-0.5 text-[10px] font-bold leading-none text-destructive-foreground shadow-sm">
           -{Math.round(product.discountPercent)}%
         </div>
       )}

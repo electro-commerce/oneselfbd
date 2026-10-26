@@ -64,3 +64,29 @@
     Referrer-Policy "strict-origin-when-cross-origin"
   }
 }
+
+# GTM Server-Side Production Tagging Server (Subdomain)
+{$GTM_TRACKING_DOMAIN:tracking.localhost} {
+  reverse_proxy gtm-server:8080
+
+  encode gzip zstd
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+}
+
+# GTM Server-Side Preview & Debug Server (Subdomain)
+{$GTM_PREVIEW_DOMAIN:preview.tracking.localhost} {
+  reverse_proxy gtm-preview:8080
+
+  encode gzip zstd
+
+  header {
+    Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    X-Content-Type-Options "nosniff"
+    Referrer-Policy "strict-origin-when-cross-origin"
+  }
+}

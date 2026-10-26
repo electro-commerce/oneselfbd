@@ -7,6 +7,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -87,12 +88,14 @@ export const ShopFiltersProvider = ({
 
   // Sync with props if they change
   useEffect(() => {
-    setAbsMinPrice(minPrice);
-    setAbsMaxPrice(maxPrice);
-    setPriceFilterState([
-      Number(queryParams.minPrice) || minPrice,
-      Number(queryParams.maxPrice) || maxPrice,
-    ]);
+    setAbsMinPrice((prev) => (prev !== minPrice ? minPrice : prev));
+    setAbsMaxPrice((prev) => (prev !== maxPrice ? maxPrice : prev));
+    const nextMin = Number(queryParams.minPrice) || minPrice;
+    const nextMax = Number(queryParams.maxPrice) || maxPrice;
+    setPriceFilterState((prev) => {
+      if (prev[0] === nextMin && prev[1] === nextMax) return prev;
+      return [nextMin, nextMax];
+    });
   }, [minPrice, maxPrice, queryParams.minPrice, queryParams.maxPrice]);
 
   useEffect(() => {
@@ -111,10 +114,10 @@ export const ShopFiltersProvider = ({
     syncDefaultCategoriesToUrl,
   ]);
 
-  const setAbsPriceRange = (min: number, max: number) => {
-    setAbsMinPrice(min);
-    setAbsMaxPrice(max);
-  };
+  const setAbsPriceRange = useCallback((min: number, max: number) => {
+    setAbsMinPrice((prev) => (prev !== min ? min : prev));
+    setAbsMaxPrice((prev) => (prev !== max ? max : prev));
+  }, []);
 
   const debouncedPrice = useDebounce(priceFilterState, 500);
 
@@ -176,7 +179,7 @@ export const ShopFiltersProvider = ({
   );
   const stockStatus = (queryParams["stock"] as string) || "";
 
-  const clearAllFilters = () => {
+  const clearAllFilters = useCallback(() => {
     isClearing.current = true;
     setPriceFilterState([absMinPrice, absMaxPrice]);
     resetParams();
@@ -184,7 +187,7 @@ export const ShopFiltersProvider = ({
     setTimeout(() => {
       isClearing.current = false;
     }, 500);
-  };
+  }, [absMinPrice, absMaxPrice, resetParams]);
 
   const activeFilterCount = useMemo(() => {
     let count = 0;
@@ -214,43 +217,82 @@ export const ShopFiltersProvider = ({
     };
   }, [queryParams, hiddenCategories, getArrayParam]);
 
+  const setSelectedCategoriesHandler = useCallback(
+    (val: SetStateAction<string[]>) => {
+      const next = typeof val === "function" ? val(selectedCategories) : val;
+      setArrayParam("category", next);
+    },
+    [selectedCategories, setArrayParam]
+  );
+
+  const setSelectedBrandsHandler = useCallback(
+    (val: SetStateAction<string[]>) => {
+      const next = typeof val === "function" ? val(selectedBrands) : val;
+      setArrayParam("brand", next);
+    },
+    [selectedBrands, setArrayParam]
+  );
+
+  const setSelectedCollectionsHandler = useCallback(
+    (val: SetStateAction<string[]>) => {
+      const next = typeof val === "function" ? val(selectedCollections) : val;
+      setArrayParam("collection", next);
+    },
+    [selectedCollections, setArrayParam]
+  );
+
+  const setStockStatusHandler = useCallback(
+    (val: SetStateAction<string>) => {
+      const next = typeof val === "function" ? val(stockStatus) : val;
+      setParam({ stock: next });
+    },
+    [setParam, stockStatus]
+  );
+
+  const contextValue = useMemo(
+    () => ({
+      selectedCategories,
+      setSelectedCategories: setSelectedCategoriesHandler,
+      selectedBrands,
+      setSelectedBrands: setSelectedBrandsHandler,
+      selectedCollections,
+      setSelectedCollections: setSelectedCollectionsHandler,
+      stockStatus,
+      setStockStatus: setStockStatusHandler,
+      priceFilterState,
+      setPriceFilterState,
+      absMinPrice,
+      absMaxPrice,
+      setAbsPriceRange,
+      clearAllFilters,
+      activeFilterCount,
+      queryParams: finalQueryParams,
+      currentPage,
+      limit,
+    }),
+    [
+      selectedCategories,
+      setSelectedCategoriesHandler,
+      selectedBrands,
+      setSelectedBrandsHandler,
+      selectedCollections,
+      setSelectedCollectionsHandler,
+      stockStatus,
+      setStockStatusHandler,
+      priceFilterState,
+      absMinPrice,
+      absMaxPrice,
+      setAbsPriceRange,
+      clearAllFilters,
+      activeFilterCount,
+      finalQueryParams,
+      currentPage,
+      limit,
+    ]
+  );
+
   return (
-    <ShopFiltersContext.Provider
-      value={{
-        selectedCategories,
-        setSelectedCategories: (val) => {
-          const next =
-            typeof val === "function" ? val(selectedCategories) : val;
-          setArrayParam("category", next);
-        },
-        selectedBrands,
-        setSelectedBrands: (val) => {
-          const next = typeof val === "function" ? val(selectedBrands) : val;
-          setArrayParam("brand", next);
-        },
-        selectedCollections,
-        setSelectedCollections: (val) => {
-          const next =
-            typeof val === "function" ? val(selectedCollections) : val;
-          setArrayParam("collection", next);
-        },
-        stockStatus,
-        setStockStatus: (val) => {
-          const next = typeof val === "function" ? val(stockStatus) : val;
-          setParam({ stock: next });
-        },
-        priceFilterState,
-        setPriceFilterState,
-        absMinPrice,
-        absMaxPrice,
-        setAbsPriceRange,
-        clearAllFilters,
-        activeFilterCount,
-        queryParams: finalQueryParams,
-        currentPage,
-        limit,
-      }}
-    >
+    <ShopFiltersContext.Provider value={contextValue}>
       {children}
     </ShopFiltersContext.Provider>
   );
