@@ -28,7 +28,7 @@ COPY apps/dashboard/ apps/dashboard/
 
 # Build standalone Next.js bundle
 ENV NEXT_TELEMETRY_DISABLED=1
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+ENV NODE_OPTIONS="--max-old-space-size=4096 --dns-result-order=ipv4first"
 # GitHub Actions supplies the app configuration from Variables (or Secrets)
 # as a BuildKit file mount. Its content hash invalidates the build cache.
 ARG FRONTEND_ENV_HASH
