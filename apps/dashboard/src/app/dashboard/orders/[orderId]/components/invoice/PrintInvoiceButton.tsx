@@ -137,7 +137,7 @@ const PrintInvoiceButton = ({ orders }: { orders: TOrders[] }) => {
                       </p>
                       <p className="text-black">{config.company_info.phone}</p>
                       <p className="text-black">
-                        {config.company_info.address || "Dhaka, Bangladesh"}
+                        {config.company_info.address || "Khulna, Bangladesh"}
                       </p>
                     </div>
                   </div>

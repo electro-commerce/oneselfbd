@@ -13,8 +13,8 @@ const config = {
   },
   company_info: {
     name: process.env.NEXT_PUBLIC_COMPANY_NAME || "Oneself",
-    phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || "",
-    address: process.env.NEXT_PUBLIC_COMPANY_ADDRESS || "Dhaka, Bangladesh",
+    phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || "+880 1967-214215",
+    address: process.env.NEXT_PUBLIC_COMPANY_ADDRESS || "Khulna, Bangladesh",
   },
   per_item_shipping_cost: 0,
   upload_limits: {

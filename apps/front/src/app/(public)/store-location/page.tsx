@@ -12,13 +12,13 @@ import {
 } from "react-icons/fa";
 
 export const metadata: Metadata = {
-  title: "দোকানের ঠিকানা | TechMela",
-  description: `${SITE.nameBn}-এর শোরুমের ঠিকানা ও গুগল ম্যাপ লোকেশন। সরাসরি এসে পছন্দের পণ্য সংগ্রহ করতে পারেন মোতালিব প্লাজা, হাতিরপুল, ঢাকা-১২০৫ থেকে।`,
+  title: `দোকানের ঠিকানা | ${SITE.nameEn}`,
+  description: `${SITE.nameBn}-এর ঠিকানা ও গুগল ম্যাপ লোকেশন। সরাসরি এসে পছন্দের পণ্য সংগ্রহ করতে পারেন ${SITE.address} থেকে।`,
   keywords: [
-    `${SITE.nameBn} শোরুম`,
-    "Store Location TechMela",
-    "Hatirpool Tech Shop",
-    "Motalib Plaza Hatirpool Dhaka",
+    `${SITE.nameBn} ঠিকানা`,
+    `Store Location ${SITE.nameEn}`,
+    "Khulna Shop",
+    "Khulna Bangladesh",
   ].join(", "),
   alternates: {
     canonical: `${SITE.baseUrl}/store-location`,
@@ -86,10 +86,10 @@ const StoreLocationPage = () => {
                 <div className="h-[300px] sm:h-[400px] lg:h-[500px] relative">
                   <iframe
                     className="w-full h-full grayscale-[0.2] contrast-[1.1] transition-all duration-700 group-hover:grayscale-0"
-                    src="https://maps.google.com/maps?q=Motalib+Plaza,+Hatirpool,+Dhaka-1205&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                    src="https://maps.google.com/maps?q=Khulna,+Bangladesh&t=&z=13&ie=UTF8&iwloc=&output=embed"
                     allowFullScreen
                     loading="lazy"
-                    title="Google Map - TechMela"
+                    title={`Google Map - ${SITE.nameEn}`}
                   ></iframe>
                 </div>
               </div>
@@ -119,7 +119,7 @@ const StoreLocationPage = () => {
                         শোরুমের ঠিকানা
                       </p>
                       <p className="text-xl text-foreground leading-relaxed font-medium">
-                        দোকান নং- ৩৬৯, মোতালিব প্লাজা, হাতিরপুল, ঢাকা-১২০৫
+                        {SITE.address}
                       </p>
                     </div>
 
@@ -131,14 +131,14 @@ const StoreLocationPage = () => {
                       </p>
                       <div className="space-y-4">
                         <a
-                          href="tel:+8801744675030"
+                          href={`tel:${SITE.phone}`}
                           className="inline-flex items-center gap-4 group"
                         >
                           <div className="w-12 h-12 bg-success/10 rounded-2xl flex items-center justify-center text-success transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                             <FaHeadset size={22} />
                           </div>
                           <span className="text-2xl font-black text-foreground group-hover:text-primary transition-colors">
-                            +8801744675030
+                            {SITE.phoneDisplay || SITE.phone}
                           </span>
                         </a>
                       </div>
@@ -157,13 +157,13 @@ const StoreLocationPage = () => {
                             bg: "bg-primary/10",
                           },
                           {
-                            href: `https://wa.me/${SITE.phone.replace("+", "")}`,
+                            href: `https://wa.me/${SITE.phone.replace(/[^0-9]/g, "")}`,
                             icon: FaWhatsapp,
                             color: "text-success",
                             bg: "bg-success/10",
                           },
                           {
-                            href: "https://www.facebook.com/groups/548576081614946",
+                            href: SITE.social.facebookGroup,
                             icon: FaUsers,
                             color: "text-primary",
                             bg: "bg-primary/10",

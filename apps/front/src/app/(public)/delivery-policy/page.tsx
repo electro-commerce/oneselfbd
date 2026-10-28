@@ -1,3 +1,4 @@
+import { SITE } from "@/const/site.const";
 import TShippingCharges from "@/types/shippingCharge";
 import serverSideFetcher from "@/utilities/serverSideFetcher";
 import Image from "next/image";
@@ -12,8 +13,8 @@ import {
 } from "react-icons/fa";
 
 export const metadata = {
-  title: "ডেলিভারি পলিসি | TechMela",
-  description: "TechMela-র ডেলিভারি পলিসি, ডেলিভারি চার্জ ও সময়সীমা সম্পর্কে জানুন। সারা বাংলাদেশে দ্রুত ও নিরাপদ হোম ডেলিভারি।",
+  title: `ডেলিভারি পলিসি | ${SITE.nameEn}`,
+  description: `${SITE.nameBn}-এর ডেলিভারি পলিসি, ডেলিভারি চার্জ ও সময়সীমা সম্পর্কে জানুন। সারা বাংলাদেশে দ্রুত ও নিরাপদ হোম ডেলিভারি।`,
 };
 
 const DeliveryPolicyPage = async () => {
@@ -65,7 +66,7 @@ const DeliveryPolicyPage = async () => {
             </h2>
           </div>
           <p className="text-lg text-muted-foreground leading-relaxed font-light">
-            TechMela বর্তমানে সমগ্র বাংলাদেশে হোম ডেলিভারি সুবিধা প্রদান করছে। ঢাকা সিটি এবং ঢাকার বাইরে বিশ্বস্ত কুরিয়ার সার্ভিসের মাধ্যমে পণ্য নিরাপদে আপনার ঠিকানায় পৌঁছে দেওয়া হয়।
+            {SITE.nameBn} বর্তমানে সমগ্র বাংলাদেশে হোম ডেলিভারি সুবিধা প্রদান করছে। বিশ্বস্ত কুরিয়ার সার্ভিসের মাধ্যমে পণ্য নিরাপদে আপনার ঠিকানায় পৌঁছে দেওয়া হয়।
           </p>
         </section>
 
@@ -183,11 +184,11 @@ const DeliveryPolicyPage = async () => {
             যেকোনো তথ্যের জন্য আমাদের হেল্পলাইনে যোগাযোগ করুন
           </h3>
           <a
-            href="tel:+8801744675030"
+            href={`tel:${SITE.phone}`}
             className="inline-flex items-center gap-4 bg-primary-foreground/10 backdrop-blur-md px-8 py-3 rounded-full border border-primary-foreground/20 hover:bg-primary-foreground/20 transition-colors"
           >
             <span className="text-2xl md:text-3xl font-black tracking-widest">
-              +8801744675030
+              {SITE.phoneDisplay || SITE.phone}
             </span>
           </a>
         </div>

@@ -1,3 +1,4 @@
+import { SITE } from "@/const/site.const";
 import Image from "next/image";
 import {
     FaCheckCircle,
@@ -8,8 +9,8 @@ import {
 } from "react-icons/fa";
 
 export const metadata = {
-  title: "রিটার্ন ও রিফান্ড পলিসি | TechMela",
-  description: "TechMela-র রিটার্ন ও রিফান্ড পলিসি। যেকোনো সমস্যা বা ত্রুটির ক্ষেত্রে সহজে পণ্য রিটার্ন ও অর্থ ফেরত পাওয়ার নিয়মাবলী।",
+  title: `রিটার্ন ও রিফান্ড পলিসি | ${SITE.nameEn}`,
+  description: `${SITE.nameBn}-র রিটার্ন ও রিফান্ড পলিসি। যেকোনো সমস্যা বা ত্রুটির ক্ষেত্রে সহজে পণ্য রিটার্ন ও অর্থ ফেরত পাওয়ার নিয়মাবলী।`,
 };
 
 const ReturnPolicyPage = () => {
@@ -55,7 +56,7 @@ const ReturnPolicyPage = () => {
             ভূমিকা
           </h2>
           <p className="text-lg text-muted-foreground leading-relaxed font-light">
-            সম্মানিত গ্রাহক! TechMela সর্বদা সেরা গ্রাহকসেবা প্রদানে অঙ্গীকারবদ্ধ। ক্রয়কৃত পণ্যে কোনো ত্রুটি বা সমস্যা থাকলে আমাদের নীতিমালা অনুযায়ী সহজে রিটার্ন সুবিধা গ্রহণ করতে পারবেন।
+            সম্মানিত গ্রাহক! {SITE.nameBn} সর্বদা সেরা গ্রাহকসেবা প্রদানে অঙ্গীকারবদ্ধ। ক্রয়কৃত পণ্যে কোনো ত্রুটি বা সমস্যা থাকলে আমাদের নীতিমালা অনুযায়ী সহজে রিটার্ন সুবিধা গ্রহণ করতে পারবেন।
           </p>
         </section>
 
@@ -157,12 +158,12 @@ const ReturnPolicyPage = () => {
             যেকোনো তথ্যের জন্য
           </p>
           <a
-            href="tel:+8801744675030"
+            href={`tel:${SITE.phone}`}
             className="inline-flex items-center gap-4 py-3 px-8 bg-background rounded-full shadow-lg border border-border hover:border-primary transition-colors"
           >
             <FaPhoneAlt className="text-primary" />
             <span className="text-2xl font-black text-foreground tracking-wider">
-              +8801744675030
+              {SITE.phoneDisplay || SITE.phone}
             </span>
           </a>
         </div>

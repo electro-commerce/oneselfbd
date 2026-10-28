@@ -14,13 +14,13 @@ import {
 import ContactForm from "./components/ContactForm";
 
 export const metadata: Metadata = {
-  title: "যোগাযোগ | TechMela",
+  title: `যোগাযোগ | ${SITE.nameEn}`,
   description: `${SITE.nameBn}-এর সাথে যোগাযোগ করুন। যেকোনো প্রশ্ন, মতামত বা সহায়তার জন্য আমরা প্রস্তুত। এখানে আমাদের ঠিকানা, ফোন নম্বর এবং ইমেইল পাবেন।`,
   keywords: [
     `যোগাযোগ ${SITE.nameBn}`,
-    "TechMela Contact",
-    "TechMela Phone Number",
-    "TechMela Address",
+    `${SITE.nameEn} Contact`,
+    `${SITE.nameEn} Phone Number`,
+    `${SITE.nameEn} Address`,
   ].join(", "),
   alternates: {
     canonical: `${SITE.baseUrl}/contact-us`,
@@ -60,7 +60,7 @@ const ContactUsPage = () => {
               name: "সরাসরি পণ্য দেখার জন্য শোরুম কোথায় অবস্থিত?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "আমাদের শোরুমের ঠিকানা: শপ নং- ৩৬৯, মোতালিব প্লাজা, হাতিরপুল, ঢাকা-১২০৫।",
+                text: `আমাদের ঠিকানা: ${SITE.address}।`,
               },
             },
             {
@@ -68,7 +68,7 @@ const ContactUsPage = () => {
               name: "আপনাদের হেল্পলাইন নম্বর কত?",
               acceptedAnswer: {
                 "@type": "Answer",
-                text: "আমাদের হেল্পলাইন নম্বর +8801744675030। যেকোনো প্রয়োজনে কল করতে পারেন।",
+                text: `আমাদের হেল্পলাইন নম্বর ${SITE.phoneDisplay || SITE.phone}। যেকোনো প্রয়োজনে কল করতে পারেন।`,
               },
             },
           ],
@@ -127,8 +127,8 @@ const ContactUsPage = () => {
                       ফোন নম্বর
                     </h4>
                     <p className="text-xl font-bold text-foreground">
-                      <a href="tel:+8801744675030" className="hover:text-primary transition-colors">
-                        +8801744675030
+                      <a href={`tel:${SITE.phone}`} className="hover:text-primary transition-colors">
+                        {SITE.phoneDisplay || SITE.phone}
                       </a>
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
@@ -167,7 +167,7 @@ const ContactUsPage = () => {
                       ঠিকানা
                     </h4>
                     <p className="text-foreground font-bold leading-relaxed">
-                      দোকান নং- ৩৬৯, মোতালিব প্লাজা, হাতিরপুল, ঢাকা-১২০৫
+                      {SITE.address}
                     </p>
                   </div>
                 </div>
@@ -189,7 +189,7 @@ const ContactUsPage = () => {
                     <FaFacebook className="text-2xl" />
                   </a>
                   <a
-                    href={`https://wa.me/${SITE.phone.replace("+", "")}`}
+                    href={`https://wa.me/${SITE.phone.replace(/[^0-9]/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 bg-success/10 text-success rounded-xl flex items-center justify-center hover:bg-success hover:text-success-foreground transition-all transform hover:-translate-y-1 shadow-sm"
@@ -198,7 +198,7 @@ const ContactUsPage = () => {
                     <FaWhatsapp className="text-2xl" />
                   </a>
                   <a
-                    href="https://www.facebook.com/groups/548576081614946"
+                    href={SITE.social.facebookGroup}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-12 h-12 bg-primary/10 text-primary rounded-xl flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all transform hover:-translate-y-1 shadow-sm"
@@ -233,10 +233,10 @@ const ContactUsPage = () => {
           <div className="rounded-3xl overflow-hidden shadow-xl border border-border h-[400px]">
             <iframe
               className="w-full h-full"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3652.9931714529966!2d90.48777747362271!3d23.711937890255083!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3755b70009c04db1%3A0x814b3a09778a03cf!2sSurmela%20bari!5e0!3m2!1sen!2sbd!4v1773033356114!5m2!1sen!2sbd"
+              src="https://maps.google.com/maps?q=Khulna,+Bangladesh&t=&z=13&ie=UTF8&iwloc=&output=embed"
               allowFullScreen
               loading="lazy"
-              title="Google Map - TechMela"
+              title={`Google Map - ${SITE.nameEn}`}
             ></iframe>
           </div>
         </div>
