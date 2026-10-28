@@ -1,3 +1,4 @@
+import { SITE } from "@/const/site.const";
 import { Phone, Truck } from "lucide-react";
 import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa";
@@ -14,13 +15,13 @@ const TopHeader = () => (
       </p>
       <div className="hidden items-center gap-5 lg:flex">
         <a
-          href="tel:+8801744675030"
+          href={`tel:${SITE.phone}`}
           className="flex items-center gap-1.5 hover:underline underline-offset-4"
         >
-          <Phone className="size-3.5" aria-hidden="true" /> +8801744675030
+          <Phone className="size-3.5" aria-hidden="true" /> {SITE.phoneDisplay || SITE.phone}
         </a>
         <a
-          href="https://wa.me/8801772065894"
+          href={`https://wa.me/${SITE.phone.replace(/[^0-9]/g, "")}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-1.5 hover:underline underline-offset-4"

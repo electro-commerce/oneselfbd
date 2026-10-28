@@ -70,11 +70,11 @@ const ThankYouCard = ({ orderId }: { orderId?: string }) => {
             <FaFacebookF size={24} />
           </a>
           <a
-            href={SITE.social.instagram}
+            href={SITE.social.facebookGroup}
             target="_blank"
             rel="noopener noreferrer"
             className="bg-primary/5 p-3 rounded-full text-primary hover:bg-primary hover:text-primary-foreground hover:scale-110 transition-all duration-300"
-            title="কমিউনিটি গ্রুপ"
+            title="ফেসবুক গ্রুপ"
           >
             <FaUsers size={24} />
           </a>

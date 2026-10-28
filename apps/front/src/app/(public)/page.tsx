@@ -94,9 +94,10 @@ const Home = async () => {
     priceRange: "$$",
     address: {
       "@type": "PostalAddress",
-      streetAddress: SITE.address,
-      addressLocality: "হাতিরপুল, ঢাকা",
-      postalCode: "1205",
+      streetAddress: SITE.addressEn,
+      addressLocality: "Khulna",
+      addressRegion: "Khulna",
+      postalCode: "9000",
       addressCountry: "BD",
     },
     openingHoursSpecification: [

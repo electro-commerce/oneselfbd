@@ -8,6 +8,7 @@ import OrderLimit from "@/components/orderLimit/OrderLimit";
 import EcButton from "@/components/shared/EcButton/EcButton";
 import ErrorMessage from "@/components/shared/errorMessage/ErrorMessage";
 import { TCheckoutCustomer } from "@/app/(landing-page)/_hooks/useLandingPageTracking";
+import { SITE } from "@/const/site.const";
 import { isValidBdPhone } from "@/const/validation.const";
 import useCheckoutLogic from "@/hooks/useCheckoutLogic";
 import useSalesOrderSubmit from "@/hooks/useSalesOrderSubmit";
@@ -332,10 +333,10 @@ const SalesOrderForm = ({
                   অর্ডার করতে সমস্যা হলে নিচের নম্বরে কল করুন
                 </p>
                 <a
-                  href="tel:+8801744675030"
+                  href={`tel:${SITE.phone}`}
                   className="inline-flex items-center justify-center gap-3 bg-background text-primary font-black px-8 py-3 rounded-xl border border-primary/10 shadow-lg hover:shadow-xl hover:bg-muted transition-all text-lg lg:text-xl"
                 >
-                  +8801744675030
+                  {SITE.phoneDisplay || SITE.phone}
                 </a>
               </div>
             </div>

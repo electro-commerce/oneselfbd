@@ -1,5 +1,6 @@
 "use client";
 import logo from "@/../public/logo/logo.png";
+import { SITE } from "@/const/site.const";
 import Image from "next/image";
 import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa";
@@ -25,15 +26,15 @@ const SalesHeader = ({ onOrderClick }: Props) => {
 
       <div className="flex items-center gap-2 sm:gap-3">
         <a
-          href="tel:+8801744675030"
+          href={`tel:${SITE.phone}`}
           className="hidden sm:flex items-center gap-1.5 bg-white/10 text-white px-3 py-1.5 rounded-full border border-white/20 font-bold text-sm hover:bg-white/20 transition-all cursor-pointer"
         >
           <MdCall className="text-lg" />
-          <span>+8801744675030</span>
+          <span>{SITE.phoneDisplay || SITE.phone}</span>
         </a>
 
         <a
-          href="https://wa.me/8801772065894"
+          href={`https://wa.me/${SITE.phone.replace(/[^0-9]/g, "")}`}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center bg-white/15 text-white p-2 sm:px-3 sm:py-1.5 rounded-full border border-white/20 shadow-xs hover:bg-white/25 transition-all active:scale-95"

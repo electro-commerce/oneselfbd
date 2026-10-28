@@ -113,9 +113,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             priceRange: "$$",
             address: {
               "@type": "PostalAddress",
-              streetAddress: SITE.address,
-              addressLocality: "Hatirpool, Dhaka",
-              postalCode: "1205",
+              streetAddress: SITE.addressEn,
+              addressLocality: "Khulna",
+              addressRegion: "Khulna",
+              postalCode: "9000",
               addressCountry: "BD",
             },
             openingHoursSpecification: [
@@ -142,8 +143,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             sameAs: [
               SITE.social.facebook,
               SITE.social.youtube,
-              SITE.social.instagram,
-              SITE.social.tiktok,
+              SITE.social.facebookGroup,
             ],
           }}
         />

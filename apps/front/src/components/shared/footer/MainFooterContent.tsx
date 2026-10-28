@@ -122,14 +122,16 @@ const MainFooterContent = () => {
                   <FaFacebookF size={18} />
                 </a>
                 <a
-                  href="#"
+                  href={SITE.social.facebookGroup}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-muted p-2.5 rounded-full text-foreground hover:bg-primary hover:text-primary-foreground hover:-translate-y-1 transition-all duration-300 shadow-sm"
-                  aria-label="কমিউনিটি গ্রুপ"
+                  aria-label="ফেসবুক গ্রুপ"
                 >
                   <FaUsers size={18} />
                 </a>
                 <a
-                  href="https://wa.me/8801772065894"
+                  href={`https://wa.me/${SITE.phone.replace(/[^0-9]/g, "")}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="bg-muted p-2.5 rounded-full text-foreground hover:bg-success hover:text-success-foreground hover:-translate-y-1 transition-all duration-300 shadow-sm"
