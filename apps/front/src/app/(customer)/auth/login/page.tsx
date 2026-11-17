@@ -1,7 +1,7 @@
 import LoginForm from "./components/LoginForm";
 
 export const metadata = {
-  title: "লগইন | TechMela",
+  title: "লগইন | Oneself",
 };
 
 const LoginPage = () => {

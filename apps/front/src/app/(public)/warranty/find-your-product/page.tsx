@@ -4,7 +4,7 @@ import Conditions from "./components/conditions/Conditions";
 import SearchProduct from "./components/searchProduct/SearchProduct";
 
 export const metadata: Metadata = {
-  title: "ওয়ারেন্টি অনুসন্ধান | TechMela",
+  title: "ওয়ারেন্টি অনুসন্ধান | Oneself",
   description: "আপনার পণ্যের ওয়ারেন্টি কোড দিয়ে ওয়ারেন্টির মেয়াদ ও স্থিতি অনুসন্ধান করুন।",
 };
 

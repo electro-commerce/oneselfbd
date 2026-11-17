@@ -38,9 +38,9 @@ export async function generateMetadata({
   const categories = await fetchCategories();
   const category = categories.find((cat) => cat.slug === decodedSlug);
 
-  if (!category) return { title: "ক্যাটাগরি পাওয়া যায়নি | TechMela" };
+  if (!category) return { title: "ক্যাটাগরি পাওয়া যায়নি | Oneself" };
 
-  const title = `${category.name} | TechMela`;
+  const title = `${category.name} | Oneself`;
   const description =
     category.description ||
     `${SITE.nameBn} থেকে সেরা মানের ${category.name} পণ্য কিনুন। হাজারো পণ্যের সমাহার এক প্ল্যাটফর্মে।`;
@@ -51,7 +51,7 @@ export async function generateMetadata({
     description,
     keywords: [
       `${category.name} পণ্য`,
-      `${category.name} TechMela`,
+      `${category.name} Oneself`,
       category.name,
       SITE.nameBn,
     ].join(", "),

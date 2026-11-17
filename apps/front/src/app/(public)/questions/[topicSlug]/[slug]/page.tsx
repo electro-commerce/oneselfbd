@@ -73,7 +73,7 @@ export async function generateMetadata({ params }: TProps): Promise<Metadata> {
   const item = await getQuestion(params.slug).catch(() => null);
 
   if (!item || item.status !== "published") {
-    return { title: "প্রশ্নটি পাওয়া যায়নি | TechMela" };
+    return { title: "প্রশ্নটি পাওয়া যায়নি | Oneself" };
   }
 
   const url = `${SITE_URL}/questions/${params.topicSlug}/${item.slug}`;

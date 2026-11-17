@@ -43,9 +43,7 @@ const MainFooterContent = () => {
               </div>
             </Link>
             <p className="text-sm font-medium leading-relaxed text-foreground">
-              ❝টেকমেল্লা❞ বাংলাদেশের একটি নির্ভরযোগ্য অনলাইন শপ, যা শতভাগ আসল
-              প্রোডাক্ট, দ্রুত ডেলিভারি ও আন্তরিক কাস্টমার সাপোর্টের নিশ্চয়তা
-              দেয়।
+              {SITE.descriptionBn}
             </p>
           </div>
 

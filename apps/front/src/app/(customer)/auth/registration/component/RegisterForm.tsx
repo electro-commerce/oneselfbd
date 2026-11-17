@@ -130,7 +130,7 @@ const RegisterForm = () => {
               নতুন অ্যাকাউন্ট তৈরি করুন
             </CardTitle>
             <CardDescription className="text-muted-foreground">
-              TechMela-তে কেনাকাটা শুরু করতে নিবন্ধন করুন
+              Oneself-তে কেনাকাটা শুরু করতে নিবন্ধন করুন
             </CardDescription>
           </div>
         </CardHeader>

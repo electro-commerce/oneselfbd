@@ -21,7 +21,7 @@ const CarouselUi = ({ slider }: { slider: TSliders }) => {
       <Image
         className="w-full h-full object-cover transition-transform duration-700"
         src={imgSrc}
-        alt={image?.alt || "টেকমেল্লা ব্যানার"}
+        alt={image?.alt || "ওয়ানসেলফ ব্যানার"}
         height={1200}
         width={1920}
         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1920px"
