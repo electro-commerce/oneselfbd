@@ -33,6 +33,7 @@ export type TOrderInfo = {
   orderedProducts: TOrderedProducts[];
   products?: TOrderedProducts[];
   subtotal: number;
+  tax?: number;
   total: number;
   discount: number;
   couponDiscount: number;
