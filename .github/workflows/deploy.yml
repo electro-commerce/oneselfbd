@@ -116,6 +116,9 @@ jobs:
           if missing:
               raise SystemExit('Missing build environment variables: ' + ', '.join(sorted(missing)))
           if os.environ['APP_NAME'] == 'front':
+              match = re.search(r'^\s*NEXT_PUBLIC_FRONT_GTM_ID\s*=\s*["\']?(GTM-[A-Z0-9]+)["\']?\s*$', os.environ['ENV_CONTENT'], re.M)
+              if not match:
+                  raise SystemExit('Missing or invalid NEXT_PUBLIC_FRONT_GTM_ID in FRONT_ENV_PRODUCTION')
               legacy = {key for key in keys if not key.startswith(prefix)}
               if legacy:
                   raise SystemExit('Rename storefront variables to NEXT_PUBLIC_FRONT_: ' + ', '.join(sorted(legacy)))
