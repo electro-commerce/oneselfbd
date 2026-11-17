@@ -239,6 +239,19 @@ jobs:
               }).catch(error => { console.error(error.message); process.exit(1); });
             '
 
+            # The landing page requires a server-only product ID list at runtime.
+            # Fail the deployment if the storefront silently renders without its order form.
+            docker compose -f docker-compose.prod.yml exec -T front node -e '
+              fetch("http://127.0.0.1:3000/smart-pir-motion-sensor-led-bulb", {
+                signal: AbortSignal.timeout(30000)
+              }).then(async response => {
+                const html = await response.text();
+                if (!response.ok || !html.includes("pir-landing-payment")) {
+                  throw new Error("PIR landing checkout is unavailable: HTTP " + response.status);
+                }
+              }).catch(error => { console.error(error.message); process.exit(1); });
+            '
+
             # Save the deployed image selection for subsequent manual Compose commands.
             printf 'IMAGE_REPOSITORY=%s\nIMAGE_TAG=%s\n' "$IMAGE_REPOSITORY" "$IMAGE_TAG" > .env.images
 
