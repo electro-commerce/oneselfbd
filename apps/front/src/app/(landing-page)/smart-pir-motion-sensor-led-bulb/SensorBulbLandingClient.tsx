@@ -12,6 +12,7 @@ import { PRODUCT_TYPE, STOCK_STATUS } from "@/const/product.const";
 import { isValidBdPhone } from "@/const/validation.const";
 import useCheckoutLogic from "@/hooks/useCheckoutLogic";
 import useSalesOrderSubmit from "@/hooks/useSalesOrderSubmit";
+import { useAppSelector } from "@/redux/hooks";
 import {
   getDefaultVariation,
   getTrackingItemId,
@@ -198,8 +199,11 @@ function OrderForm({
   });
 
   const shipping = useWatch({ control: methods.control, name: "shipping" });
+  const selectedShipping = useAppSelector((state) => state.shippingClass);
   const checkoutTracked = useRef(false);
   const checkoutTrackingPromise = useRef<Promise<void> | null>(null);
+  const shippingTrackedFor = useRef<string | null>(null);
+  const shippingTrackingPromise = useRef<Promise<void> | null>(null);
   const trackCheckout = useCallback((customer: TShippingInfo) => {
     if (
       checkoutTracked.current ||
@@ -235,6 +239,57 @@ function OrderForm({
     if (shipping) trackCheckout(shipping);
   }, [shipping, trackCheckout]);
 
+  const trackShipping = useCallback((customer: TShippingInfo) => {
+    const shippingSelectionKey = JSON.stringify({
+      shippingId: selectedShipping._id,
+      shippingAmount: selectedShipping.amount,
+      items: lines.map((line) => ({
+        id: getTrackingItemId(line.product._id, line.variation?._id),
+        quantity: line.quantity,
+      })),
+    });
+    if (
+      !customer?.fullAddress?.trim() ||
+      !customer?.fullName?.trim() ||
+      !isValidBdPhone(customer.phoneNumber) ||
+      !selectedShipping._id ||
+      shippingTrackedFor.current === shippingSelectionKey ||
+      lines.length === 0
+    ) return;
+
+    trackCheckout(customer);
+    shippingTrackedFor.current = shippingSelectionKey;
+    const shippingTier = shippingCharges.find(
+      (charge) => charge._id === selectedShipping._id
+    )?.name;
+    shippingTrackingPromise.current = (async () => {
+      await checkoutTrackingPromise.current?.catch(() => undefined);
+      await eventHandler({
+        event_name: "add_shipping_info",
+        fullName: customer.fullName,
+        ph: customer.phoneNumber,
+        em: customer.email || undefined,
+        upazila_id: customer.upazila,
+        content_type: "product",
+        contents: lines.map((line) => ({
+          id: getTrackingItemId(line.product._id, line.variation?._id),
+          name: line.product.title,
+          brand: line.product.brand?.name,
+          category: line.product.category?.[0]?.name,
+          variant: getVariantLabel(line.variation),
+          quantity: line.quantity,
+          item_price: line.salePrice,
+        })),
+        value: subtotal,
+        shipping: selectedShipping.amount,
+        shipping_tier: shippingTier,
+      });
+    })();
+  }, [lines, selectedShipping, shippingCharges, subtotal, trackCheckout]);
+  useEffect(() => {
+    if (shipping) trackShipping(shipping);
+  }, [shipping, trackShipping]);
+
   const canOrder =
     lines.length > 0 &&
     lines.every((line) => line.inStock && line.salePrice > 0) &&
@@ -248,7 +303,9 @@ function OrderForm({
           onSubmit={methods.handleSubmit(async (data) => {
             if (!canOrder) return;
             trackCheckout(data.shipping);
+            trackShipping(data.shipping);
             await checkoutTrackingPromise.current?.catch(() => undefined);
+            await shippingTrackingPromise.current?.catch(() => undefined);
             return handlePlaceOrder(data);
           })}
           className="grid gap-6 lg:grid-cols-2"
