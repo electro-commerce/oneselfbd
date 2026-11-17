@@ -82,7 +82,7 @@ export default async function BlogPage({
       <JsonLd data={blogJsonLd} />
       <BlogQnaListShell
         title="ব্লগ"
-        description="TechMela ব্লগে আপনাকে স্বাগতম! সেরা টেক গ্যাজেট, ইলেকট্রনিক্স পণ্য, গ্যাজেট রিভিউ ও প্রয়োজনীয় টেক টিপস সম্পর্কে জানুন।"
+        description="Oneself ব্লগে আপনাকে স্বাগতম! সেরা টেক গ্যাজেট, ইলেকট্রনিক্স পণ্য, গ্যাজেট রিভিউ ও প্রয়োজনীয় টেক টিপস সম্পর্কে জানুন।"
         type="blog"
         categories={filters.categories}
         topics={filters.topics}

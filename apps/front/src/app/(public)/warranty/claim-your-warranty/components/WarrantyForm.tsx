@@ -534,7 +534,7 @@ const WarrantyForm = () => {
                   আবেদনটি সফলভাবে জমা হয়েছে
                 </DialogTitle>
                 <DialogDescription className="text-center p-3 text-sm">
-                  আপনার ওয়ারেন্টি ক্লেমের আবেদনটি গ্রহণ করা হয়েছে। আমাদের টেকনিক্যাল টিম খুব শীঘ্রই আপনার সাথে যোগাযোগ করবে। TechMela-র সাথে থাকার জন্য ধন্যবাদ।
+                  আপনার ওয়ারেন্টি ক্লেমের আবেদনটি গ্রহণ করা হয়েছে। আমাদের টেকনিক্যাল টিম খুব শীঘ্রই আপনার সাথে যোগাযোগ করবে। Oneself-র সাথে থাকার জন্য ধন্যবাদ।
                 </DialogDescription>
               </DialogHeader>
               <DialogFooter className="mx-auto my-1">

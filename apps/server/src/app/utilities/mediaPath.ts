@@ -20,7 +20,6 @@ export const getServerRootDir = (): string => {
         const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf-8"));
         if (
           pkg.name === "oneself-server" ||
-          pkg.name === "ec-cosmetics-backend" ||
           fs.existsSync(path.join(currentDir, "dist/server.js")) ||
           fs.existsSync(path.join(currentDir, "src/server.ts"))
         ) {
@@ -38,7 +37,6 @@ export const getServerRootDir = (): string => {
     path.join(process.cwd(), "apps", "oneself-server"),
     path.join(process.cwd(), "oneself-server"),
     path.join(process.cwd(), "server"),
-    path.join(process.cwd(), "techmela-server"),
   ];
 
   for (const candidate of serverCandidates) {

@@ -82,7 +82,7 @@ export async function generateMetadata({ params }: TProps): Promise<Metadata> {
   const post = await getPost(params.slug).catch(() => null);
 
   if (!post || post.status !== "published") {
-    return { title: "ব্লগ পোস্টটি পাওয়া যায়নি | TechMela" };
+    return { title: "ব্লগ পোস্টটি পাওয়া যায়নি | Oneself" };
   }
 
   const url = `${SITE_URL}/blog/${params.categorySlug}/${params.topicSlug}/${post.slug}`;

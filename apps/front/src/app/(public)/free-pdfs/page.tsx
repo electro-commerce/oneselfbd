@@ -14,9 +14,9 @@ import { getImageSrc } from "@/lib/utils";
 type TSearchParams = Record<string, string | string[] | undefined>;
 
 export const metadata: Metadata = {
-  title: "ফ্রি পিডিএফ গাইড | TechMela",
+  title: "ফ্রি পিডিএফ গাইড | Oneself",
   description:
-    "TechMela-র বিশেষ ফ্রি গাইড ও ক্যাটালগ! সহজে ডাউনলোড করে পড়ুন।",
+    "Oneself-র বিশেষ ফ্রি গাইড ও ক্যাটালগ! সহজে ডাউনলোড করে পড়ুন।",
   alternates: {
     canonical: `${SITE_URL}/free-pdfs`,
   },
@@ -118,7 +118,7 @@ export default async function FreePdfsPage({
                 ফ্রি গাইড ও ক্যাটালগ
               </h1>
               <p className="text-base leading-7 text-muted-foreground md:text-lg">
-                TechMela-র পক্ষ থেকে বিশেষ ফ্রি গাইড। ডাউনলোড করুন, পড়ুন এবং শেয়ার করুন।
+                Oneself-র পক্ষ থেকে বিশেষ ফ্রি গাইড। ডাউনলোড করুন, পড়ুন এবং শেয়ার করুন।
               </p>
             </div>
           </ContainerMax>

@@ -11,13 +11,13 @@ import ShopFilters from "./components/ShopFilters";
 import { SITE } from "@/const/site.const";
 
 export const metadata: Metadata = {
-  title: "সকল পণ্য | TechMela",
+  title: "সকল পণ্য | Oneself",
   description: `${SITE.nameBn} অনলাইন শপে আপনাকে স্বাগতম। সকল প্রিমিয়াম গ্যাজেট ও ইলেকট্রনিক্স অ্যাকসেসরিজ সেরা মূল্যে অর্ডার করুন।`,
   keywords: [
     "অনলাইন গ্যাজেট শপ",
     "ইলেকট্রনিক্স কালেকশন",
     "স্মার্ট গ্যাজেট বাংলাদেশ",
-    "TechMela Shop",
+    "Oneself Shop",
   ].join(", "),
   alternates: {
     canonical: `${SITE.baseUrl}/shop`,

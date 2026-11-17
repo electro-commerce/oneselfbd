@@ -13,9 +13,9 @@ import { Metadata } from "next";
 type TSearchParams = Record<string, string | string[] | undefined>;
 
 export const metadata: Metadata = {
-  title: "প্রশ্নোত্তর | TechMela",
+  title: "প্রশ্নোত্তর | Oneself",
   description:
-    "TechMela প্রশ্নোত্তর পর্বে আপনাকে স্বাগতম! গ্যাজেট ও ইলেকট্রনিক্স পণ্য সংক্রান্ত আপনার সাধারণ প্রশ্নের উত্তর জেনে নিন।",
+    "Oneself প্রশ্নোত্তর পর্বে আপনাকে স্বাগতম! গ্যাজেট ও ইলেকট্রনিক্স পণ্য সংক্রান্ত আপনার সাধারণ প্রশ্নের উত্তর জেনে নিন।",
   alternates: {
     canonical: `${SITE_URL}/questions`,
   },
@@ -85,7 +85,7 @@ export default async function QuestionsPage({
       <BlogQnaListShell
         type="questions"
         title="প্রশ্ন ও উত্তর"
-        description="TechMela প্রশ্নোত্তর পর্বে আপনাকে স্বাগতম! টেক গ্যাজেট ও ইলেকট্রনিক্স সম্পর্কিত প্রয়োজনীয় সকল প্রশ্নের নির্ভরযোগ্য উত্তর এখানে পেয়ে যাবেন।"
+        description="Oneself প্রশ্নোত্তর পর্বে আপনাকে স্বাগতম! টেক গ্যাজেট ও ইলেকট্রনিক্স সম্পর্কিত প্রয়োজনীয় সকল প্রশ্নের নির্ভরযোগ্য উত্তর এখানে পেয়ে যাবেন।"
         categories={filters.categories}
         tags={filters.tags}
         searchParams={searchParams}
