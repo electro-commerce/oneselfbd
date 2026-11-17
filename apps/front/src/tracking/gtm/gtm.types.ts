@@ -69,6 +69,7 @@ export type DLVCustomData = {
   content_category?: string;
   num_items?: number;
   shipping?: number;
+  shipping_tier?: string;
   tax?: number;
   discount_value?: number;
   coupon?: string;
@@ -81,6 +82,10 @@ export type DLVEcommerce = {
   value?: number;
   currency?: string;
   transaction_id?: string;
+  shipping?: number;
+  shipping_tier?: string;
+  tax?: number;
+  coupon?: string;
   items?: GA4Item[];
 };
 
@@ -127,9 +132,11 @@ export type GTMEventPayload = {
     value?: number;
     currency?: string;
     shipping?: number;
+    shipping_tier?: string;
     tax?: number;
     discount_value?: number;
     payment_method?: string;
+    payment_type?: string;
     transaction_id?: string;
     search_term?: string;
     coupon?: string;
