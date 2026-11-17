@@ -51,7 +51,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -504,81 +504,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -662,21 +587,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
               }
             ]
           }
@@ -703,7 +613,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -1156,81 +1066,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -1314,21 +1149,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
               }
             ]
           }
@@ -1355,7 +1175,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -1808,81 +1628,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -1966,21 +1711,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
               }
             ]
           }
@@ -2007,7 +1737,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -2460,81 +2190,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -2618,36 +2273,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "search_string"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Search Term}}"
-                  }
-                ]
               }
             ]
           }
@@ -2674,7 +2299,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -3127,81 +2752,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -3285,21 +2835,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
               }
             ]
           }
@@ -3326,7 +2861,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -3779,81 +3314,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -3937,21 +3397,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
               }
             ]
           }
@@ -3978,7 +3423,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -4414,7 +3859,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -4867,81 +4312,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -5025,21 +4395,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
               }
             ]
           }
@@ -5066,7 +4421,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -5519,81 +4874,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -5677,21 +4957,6 @@
                     "value": "{{ED - Payment Method}}"
                   }
                 ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
-                  }
-                ]
               }
             ]
           }
@@ -5718,7 +4983,7 @@
           {
             "type": "TEMPLATE",
             "key": "logType",
-            "value": "debug"
+            "value": "no"
           },
           {
             "type": "BOOLEAN",
@@ -6171,81 +5436,6 @@
                   {
                     "type": "TEMPLATE",
                     "key": "name",
-                    "value": "content_name"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Name}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_ids"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content IDs}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_type"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Type}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "content_category"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Content Category}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "num_items"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Num Items}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
                     "value": "order_id"
                   },
                   {
@@ -6327,21 +5517,6 @@
                     "type": "TEMPLATE",
                     "key": "value",
                     "value": "{{ED - Payment Method}}"
-                  }
-                ]
-              },
-              {
-                "type": "MAP",
-                "map": [
-                  {
-                    "type": "TEMPLATE",
-                    "key": "name",
-                    "value": "status"
-                  },
-                  {
-                    "type": "TEMPLATE",
-                    "key": "value",
-                    "value": "{{ED - Status}}"
                   }
                 ]
               }
@@ -6627,38 +5802,6 @@
       {
         "accountId": "6381972106",
         "containerId": "266836307",
-        "variableId": "5",
-        "name": "ED - Event Name",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "event_name"
-          }
-        ],
-        "fingerprint": "1791779600467",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "6",
-        "name": "ED - Transaction ID",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "transaction_id"
-          }
-        ],
-        "fingerprint": "1791779600467",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
         "variableId": "7",
         "name": "FB - Pixel ID - REPLACE ME",
         "type": "c",
@@ -6684,22 +5827,6 @@
             "type": "TEMPLATE",
             "key": "keyPath",
             "value": "page_referrer"
-          }
-        ],
-        "fingerprint": "1791779600467",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "10",
-        "name": "ED - Page Location",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "page_location"
           }
         ],
         "fingerprint": "1791779600467",
@@ -6737,22 +5864,6 @@
         ],
         "fingerprint": "1791779600468",
         "formatValue": {}
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "18",
-        "name": "ED - Client ID",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "client_id"
-          }
-        ],
-        "fingerprint": "1791779600535",
-        "parentFolderId": "4"
       },
       {
         "accountId": "6381972106",
@@ -6821,22 +5932,6 @@
       {
         "accountId": "6381972106",
         "containerId": "266836307",
-        "variableId": "32",
-        "name": "ED - Items",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "items"
-          }
-        ],
-        "fingerprint": "1791779600564",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
         "variableId": "35",
         "name": "ED - Event Time",
         "type": "ed",
@@ -6845,22 +5940,6 @@
             "type": "TEMPLATE",
             "key": "keyPath",
             "value": "event_time"
-          }
-        ],
-        "fingerprint": "1791824923634",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "39",
-        "name": "DLV - eventModel.event_id",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.event_id"
           }
         ],
         "fingerprint": "1791824923634",
@@ -6897,44 +5976,6 @@
         ],
         "fingerprint": "1791824923634",
         "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "42",
-        "name": "ED - eventModel.user_data.fbc",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.user_data.fbc"
-          }
-        ],
-        "fingerprint": "1791824923634",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "43",
-        "name": "DLV - Event ID",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "BOOLEAN",
-            "key": "setDefaultValue",
-            "value": "false"
-          },
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "x-ga-mp2-user_properties.event_id"
-          }
-        ],
-        "fingerprint": "1791826625289",
-        "parentFolderId": "4",
-        "formatValue": {}
       },
       {
         "accountId": "6381972106",
@@ -6978,7 +6019,7 @@
           {
             "type": "TEMPLATE",
             "key": "keyPath",
-            "value": "payment_method"
+            "value": "payment_type"
           }
         ],
         "fingerprint": "1791824923635",
@@ -6995,22 +6036,6 @@
             "type": "TEMPLATE",
             "key": "keyPath",
             "value": "meta_ph"
-          }
-        ],
-        "fingerprint": "1791824923635",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "49",
-        "name": "ED - Content Type",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "content_type"
           }
         ],
         "fingerprint": "1791824923635",
@@ -7051,22 +6076,6 @@
       {
         "accountId": "6381972106",
         "containerId": "266836307",
-        "variableId": "52",
-        "name": "ED - Status",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "status"
-          }
-        ],
-        "fingerprint": "1791824923635",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
         "variableId": "53",
         "name": "ED - Event ID",
         "type": "ed",
@@ -7099,22 +6108,6 @@
       {
         "accountId": "6381972106",
         "containerId": "266836307",
-        "variableId": "55",
-        "name": "ED - eventModel.user_data.fbp",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.user_data.fbp"
-          }
-        ],
-        "fingerprint": "1791824923635",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
         "variableId": "56",
         "name": "ED - FBP",
         "type": "ed",
@@ -7126,54 +6119,6 @@
           }
         ],
         "fingerprint": "1791824923635",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "58",
-        "name": "ED - eventModel.value",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.value"
-          }
-        ],
-        "fingerprint": "1791824923635",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "61",
-        "name": "ED - Search Term",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "search_term"
-          }
-        ],
-        "fingerprint": "1791824923636",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "62",
-        "name": "ED - eventModel.order_id",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.order_id"
-          }
-        ],
-        "fingerprint": "1791824923636",
         "parentFolderId": "4"
       },
       {
@@ -7211,38 +6156,6 @@
       {
         "accountId": "6381972106",
         "containerId": "266836307",
-        "variableId": "65",
-        "name": "ED - eventModel.items",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.items"
-          }
-        ],
-        "fingerprint": "1791824923636",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "66",
-        "name": "ED - eventModel.user_data.external_id",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.user_data.external_id"
-          }
-        ],
-        "fingerprint": "1791824923636",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
         "variableId": "68",
         "name": "ED - Postal Code",
         "type": "ed",
@@ -7251,22 +6164,6 @@
             "type": "TEMPLATE",
             "key": "keyPath",
             "value": "meta_zp"
-          }
-        ],
-        "fingerprint": "1791824923636",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "69",
-        "name": "ED - eventModel.content_name",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.content_name"
           }
         ],
         "fingerprint": "1791824923636",
@@ -7298,7 +6195,7 @@
           {
             "type": "TEMPLATE",
             "key": "keyPath",
-            "value": "order_id"
+            "value": "transaction_id"
           }
         ],
         "fingerprint": "1791824923705",
@@ -7315,70 +6212,6 @@
             "type": "TEMPLATE",
             "key": "keyPath",
             "value": "discount_value"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "73",
-        "name": "ED - eventModel.user_data.phone_number",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.user_data.phone_number"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "74",
-        "name": "ED - eventModel.user_data.email_address",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.user_data.email_address"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "75",
-        "name": "ED - Content IDs",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "content_ids"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "76",
-        "name": "ED - Num Items",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "num_items"
           }
         ],
         "fingerprint": "1791824923706",
@@ -7419,22 +6252,6 @@
       {
         "accountId": "6381972106",
         "containerId": "266836307",
-        "variableId": "79",
-        "name": "ED - eventModel.content_ids",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.content_ids"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
         "variableId": "80",
         "name": "ED - FB Login ID",
         "type": "ed",
@@ -7443,22 +6260,6 @@
             "type": "TEMPLATE",
             "key": "keyPath",
             "value": "meta_fb_login_id"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "81",
-        "name": "ED - Content Name",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "content_name"
           }
         ],
         "fingerprint": "1791824923706",
@@ -7483,22 +6284,6 @@
       {
         "accountId": "6381972106",
         "containerId": "266836307",
-        "variableId": "83",
-        "name": "ED - Content Category",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "content_category"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
         "variableId": "84",
         "name": "ED - Country",
         "type": "ed",
@@ -7507,38 +6292,6 @@
             "type": "TEMPLATE",
             "key": "keyPath",
             "value": "meta_country"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "86",
-        "name": "ED - eventModel.event_id",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.event_id"
-          }
-        ],
-        "fingerprint": "1791824923706",
-        "parentFolderId": "4"
-      },
-      {
-        "accountId": "6381972106",
-        "containerId": "266836307",
-        "variableId": "87",
-        "name": "ED - eventModel.currency",
-        "type": "ed",
-        "parameter": [
-          {
-            "type": "TEMPLATE",
-            "key": "keyPath",
-            "value": "eventModel.currency"
           }
         ],
         "fingerprint": "1791824923706",
