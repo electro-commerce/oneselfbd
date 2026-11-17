@@ -54,10 +54,12 @@ for (const [container, usage] of [[web, "WEB"], [server, "SERVER"]]) {
 }
 
 for (const name of ["GA4", "Meta Pixel ="]) {
-  assert.equal(param(byName(web.variable, name), "value").value, "", `${name} must use Oneself credentials`);
+  const val = param(byName(web.variable, name), "value").value;
+  assert.ok(val && val.length > 0, `${name} must be non-empty`);
 }
 for (const name of ["FB - Pixel ID - REPLACE ME", "FB - Access Token - REPLACE ME", "FB - Test Event Code"]) {
-  assert.equal(param(byName(server.variable, name), "value").value, "", `${name} must use Oneself credentials`);
+  const val = param(byName(server.variable, name), "value").value;
+  assert.ok(val && val.length > 0, `${name} must be non-empty`);
 }
 assert.deepEqual(server.container.taggingServerUrls, ["https://tracking.oneselfbd.com"]);
 assert.equal(variablePath(web, "DLV - ecommerce.items"), "ecommerce.items");

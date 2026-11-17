@@ -9094,7 +9094,7 @@
           {
             "type": "TEMPLATE",
             "key": "value",
-            "value": ""
+            "value": "REPLACE_WITH_ONESELF_PIXEL_ID"
           }
         ],
         "fingerprint": "1791820979445",
@@ -9765,7 +9765,7 @@
           {
             "type": "TEMPLATE",
             "key": "value",
-            "value": ""
+            "value": "G-XXXXXXXXXX"
           }
         ],
         "fingerprint": "1791786854815",
