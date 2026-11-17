@@ -1,6 +1,6 @@
 # Oneself GTM tracking
 
-The storefront loads GTM only when `NEXT_PUBLIC_FRONT_GTM_ID` is set. The exported web template routes GA4 event requests to `https://tracking.oneselfbd.com`, where the GA4 client in the exported server template receives them. Server Facebook Conversions API tags send matching events to Meta once the Oneself credentials are installed. The currently published `GTM-N4LB4ZLQ` script still points at TechMela and must not be used for Oneself checkout traffic.
+The production storefront uses the published web container `GTM-5DN7NRZL`. Set `NEXT_PUBLIC_FRONT_GTM_ID` before building the frontend and `GTM_ID` in the VPS environment. The exported web template configures GA4 event requests for `https://tracking.oneselfbd.com`, where the GA4 client in the exported server template can receive them. Server Facebook Conversions API tags send matching events to Meta once the Oneself credentials are installed. Verify browser requests reach the tracking domain; the URL appearing in the published GTM script alone does not establish that events use the server container.
 
 ## Landing page funnel
 
