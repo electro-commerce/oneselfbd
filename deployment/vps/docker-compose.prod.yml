@@ -86,6 +86,7 @@ services:
       NODE_ENV: production
       PORT: 3000
       REVALIDATE_SECRET: ${REVALIDATE_SECRET:?Set a strong REVALIDATE_SECRET in .env}
+      LANDING_SMART_PIR_MOTION_SENSOR_LED_BULB_PRODUCT_IDS: ${LANDING_SMART_PIR_MOTION_SENSOR_LED_BULB_PRODUCT_IDS:?Set the landing product IDs in .env as a JSON array}
     depends_on:
       - server
     networks:
