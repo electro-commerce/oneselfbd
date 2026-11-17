@@ -101,7 +101,24 @@ export type GTMEventPayload = {
     event_id: string;
     event_time: number;
     user_data?: GA4UserData;
+    match_data?: {
+      em?: string;
+      ph?: string;
+      fn?: string;
+      ln?: string;
+      ct?: string;
+      st?: string;
+      zp?: string;
+      country?: string;
+      external_id?: string;
+      fbp?: string;
+      fbc?: string;
+      ge?: string;
+      db?: string;
+      fb_login_id?: string;
+    };
     items?: GA4Item[];
+    contents?: Content[];
     content_type?: string;
     content_ids?: string[];
     content_name?: string;

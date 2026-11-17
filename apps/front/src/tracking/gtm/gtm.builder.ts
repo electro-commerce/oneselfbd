@@ -130,7 +130,30 @@ export const buildGTMEventPayload = (
         fbc: rawEventData.fbc,
         fbp: rawEventData.fbp,
       }),
+      match_data: cleanObj({
+        em: payload.user_data?.em?.[0],
+        ph: payload.user_data?.ph?.[0],
+        fn: payload.user_data?.fn?.[0],
+        ln: payload.user_data?.ln?.[0],
+        ct: payload.user_data?.ct?.[0],
+        st: payload.user_data?.st?.[0],
+        zp: payload.user_data?.zp?.[0],
+        country: payload.user_data?.country?.[0],
+        external_id: payload.user_data?.external_id?.[0],
+        ge: payload.user_data?.ge?.[0],
+        db: payload.user_data?.db?.[0],
+        fbp: payload.user_data?.fbp,
+        fbc: payload.user_data?.fbc,
+        fb_login_id: payload.user_data?.fb_login_id,
+      }),
       items,
+      contents: payload.custom_data?.contents?.map((item) =>
+        cleanObj({
+          id: item.id,
+          quantity: item.quantity,
+          item_price: item.item_price,
+        })
+      ),
       content_type:
         payload.custom_data?.content_type ||
         (isCommerceEvent ? "product" : undefined),
@@ -140,9 +163,9 @@ export const buildGTMEventPayload = (
       num_items: payload.custom_data?.num_items,
       value,
       currency,
-      shipping: payload.custom_data?.shipping || undefined,
-      tax: payload.custom_data?.tax || undefined,
-      discount_value: payload.custom_data?.discount_value || undefined,
+      shipping: payload.custom_data?.shipping,
+      tax: payload.custom_data?.tax,
+      discount_value: payload.custom_data?.discount_value,
       payment_method: payload.custom_data?.payment_method,
       transaction_id,
       search_term: payload.custom_data?.search_string,
