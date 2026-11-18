@@ -7,13 +7,12 @@ import VariationSelector from "@/app/(public)/product/[slug]/components/Variatio
 import OrderLimit from "@/components/orderLimit/OrderLimit";
 import ContainerMax from "@/components/shared/containerMax/ContainerMax";
 import { Button } from "@/components/ui/button";
-import { PRODUCT_TYPE, STOCK_STATUS } from "@/const/product.const";
+import { PRODUCT_TYPE } from "@/const/product.const";
 import { isValidBdPhone } from "@/const/validation.const";
 import useCheckoutLogic from "@/hooks/useCheckoutLogic";
 import useSalesOrderSubmit from "@/hooks/useSalesOrderSubmit";
 import { useAppSelector } from "@/redux/hooks";
 import {
-  getDefaultVariation,
   getTrackingItemId,
   getVariantLabel,
   isVariationInStock,
@@ -24,15 +23,23 @@ import { TShippingInfo } from "@/types/order/shippingInfo";
 import { TPaymentMethod } from "@/types/paymentMethod";
 import { TSingleProduct, TVariations } from "@/types/products/singleProduct";
 import TShippingCharges from "@/types/shippingCharge";
-import {
-  Minus,
-  Plus,
-  X,
-} from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import DemoLandingStory from "./DemoLandingStory";
+import {
+  firstAvailableVariation,
+  inventoryAvailable,
+  landingProductAvailable,
+} from "./productAvailability";
 
 type Props = {
   products: TSingleProduct[];
@@ -110,14 +117,7 @@ function selectedVariation(product: TSingleProduct, selection: Selection) {
   const variations = productVariations(product);
   return (
     variations.find((variation) => variation._id === selection.variationId) ||
-    getDefaultVariation(variations)
-  );
-}
-
-function inventoryAvailable(inventory?: TSingleProduct["inventory"]) {
-  return (
-    inventory?.stockStatus !== STOCK_STATUS.OUT_OF_STOCK &&
-    (!inventory?.manageStock || inventory.stockAvailable > 0)
+    firstAvailableVariation(product)
   );
 }
 
@@ -152,12 +152,14 @@ function OrderForm({
   shippingCharges,
   paymentMethods,
   onRemoveProduct,
+  productSelection,
 }: {
   lines: SelectedLine[];
   shippingCharges: TShippingCharges[];
   paymentMethods: TPaymentMethod[];
   // eslint-disable-next-line no-unused-vars
   onRemoveProduct: (productId: string) => void;
+  productSelection: ReactNode;
 }) {
   const methods = useForm<CheckoutData>({ mode: "onSubmit" });
   const subtotal = lines.reduce(
@@ -328,6 +330,18 @@ function OrderForm({
           })}
           className="grid gap-6 lg:grid-cols-2"
         >
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8 lg:col-span-2">
+            <div className="mb-6 border-b border-slate-200 pb-5 text-center">
+              <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
+                অর্ডার কনফার্ম করতে নিচের ফর্মটি পূরণ করুন
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
+                অগ্রিম ১ টাকাও দিতে হবে না! পণ্য হাতে পেয়ে ডেলিভারি ম্যানের কাছে
+                মূল্য পরিশোধ করবেন।
+              </p>
+            </div>
+            {productSelection}
+          </div>
           <div className="space-y-4">
             <ShippingAddress disablePhoneAutoFill />
             <PaymentMethods
@@ -456,20 +470,24 @@ export default function SensorBulbLandingClient({
   shippingCharges,
   paymentMethods,
 }: Props) {
+  const availableProducts = useMemo(
+    () => products.filter(landingProductAvailable),
+    [products]
+  );
   const [selections, setSelections] = useState<Record<string, Selection>>(() =>
     Object.fromEntries(
-      products.map((product, index) => [
+      availableProducts.map((product, index) => [
         product._id,
         {
           quantity: index === 0 ? 1 : 0,
-          variationId: getDefaultVariation(productVariations(product))?._id,
+          variationId: firstAvailableVariation(product)?._id,
         },
       ])
     )
   );
-  const primary = products[0];
+  const primary = availableProducts[0];
 
-  const lines = products
+  const lines = availableProducts
     .map((product) =>
       lineFor(product, selections[product._id] || { quantity: 0 })
     )
@@ -544,6 +562,150 @@ export default function SensorBulbLandingClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [primary?._id]);
 
+  const productSelection = (
+    <div className="grid gap-4 md:grid-cols-2">
+      {availableProducts.map((product) => {
+        const selection = selections[product._id] || { quantity: 0 };
+        const line = lineFor(product, selection);
+        const variations = productVariations(product).filter((variation) =>
+          inventoryAvailable(variation.inventory)
+        );
+        const hasStock =
+          product.type === PRODUCT_TYPE.VARIABLE
+            ? variations.some(
+                (variation) =>
+                  isVariationInStock(variation) &&
+                  inventoryAvailable(variation.inventory)
+              )
+            : inventoryAvailable(product.inventory);
+
+        return (
+          <article
+            key={product._id}
+            className={`rounded-xl border bg-slate-50/60 p-4 transition-colors sm:p-5 ${selection.quantity ? "border-primary ring-1 ring-primary/20" : "border-border"}`}
+          >
+            <div className="flex gap-4">
+              <div className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-muted sm:size-28">
+                <ProductPhoto
+                  src={
+                    product._id === primary?._id
+                      ? bulbFallback
+                      : line.variation?.image?.src || product.thumbnail?.src
+                  }
+                  alt={product.title}
+                  fallback={
+                    product._id === primary?._id
+                      ? bulbFallback
+                      : "/placeholder.webp"
+                  }
+                  className="object-contain p-2"
+                  sizes="112px"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <label className="flex cursor-pointer items-start gap-3">
+                  <input
+                    type="checkbox"
+                    checked={selection.quantity > 0}
+                    disabled={
+                      selection.quantity === 0 && (!hasStock || !line.inStock)
+                    }
+                    onChange={(event) =>
+                      setProductSelected(product, event.target.checked)
+                    }
+                    className="mt-1 size-5 shrink-0 accent-primary"
+                  />
+                  <span className="font-bold leading-6">{product.title}</span>
+                </label>
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="text-lg font-extrabold text-primary">
+                    {taka(line.salePrice)}
+                  </span>
+                  {line.regularPrice > line.salePrice && (
+                    <span className="text-sm text-muted-foreground line-through">
+                      {taka(line.regularPrice)}
+                    </span>
+                  )}
+                </div>
+                {!hasStock && (
+                  <p className="mt-1 text-xs font-semibold text-destructive">
+                    স্টক শেষ
+                  </p>
+                )}
+              </div>
+            </div>
+            {variations.length > 0 && (
+              <div className="mt-4 border-t border-border pt-2">
+                <VariationSelector
+                  key={product._id}
+                  variations={variations}
+                  initialPrice={{
+                    regularPrice: line.regularPrice,
+                    salePrice: line.salePrice,
+                  }}
+                  onVariationChange={(variation) => {
+                    setSelections((current) => {
+                      const previous = current[product._id] || {
+                        quantity: 0,
+                      };
+                      if (previous.variationId === variation._id)
+                        return current;
+                      return {
+                        ...current,
+                        [product._id]: {
+                          ...previous,
+                          variationId: variation._id,
+                        },
+                      };
+                    });
+                  }}
+                />
+                {!line.inStock && (
+                  <p className="text-xs font-semibold text-destructive">
+                    এই ভ্যারিয়েন্টটি স্টকে নেই।
+                  </p>
+                )}
+              </div>
+            )}
+            <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+              <span className="text-sm font-semibold">পরিমাণ</span>
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="size-10 rounded-lg"
+                  aria-label={`${product.title} একটি কমান`}
+                  onClick={() => setQuantity(product, -1)}
+                  disabled={selection.quantity === 0}
+                >
+                  <Minus aria-hidden />
+                </Button>
+                <span
+                  className="w-8 text-center font-bold tabular-nums"
+                  aria-live="polite"
+                >
+                  {selection.quantity}
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="size-10 rounded-lg"
+                  aria-label={`${product.title} একটি বাড়ান`}
+                  onClick={() => setQuantity(product, 1)}
+                  disabled={!hasStock || !line.inStock}
+                >
+                  <Plus aria-hidden />
+                </Button>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
+
   return (
     <main className="dark min-h-screen bg-[#031b2e] text-white">
       <DemoLandingStory />
@@ -553,185 +715,20 @@ export default function SensorBulbLandingClient({
         className="pir-checkout scroll-mt-6 bg-[#f8fafc] py-12 text-slate-900 sm:py-16"
       >
         <ContainerMax>
-          <div className="mb-8 max-w-2xl">
-            <p className="text-sm font-bold text-[#0369a1]">
-              ক্যাশ অন ডেলিভারি অর্ডার ফর্ম · ১০০% নিরাপদ কেনাকাটা
-            </p>
-            <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
-              পণ্য ও পরিমাণ নির্বাচন করুন
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-slate-600">
-              একাধিক পণ্য বেছে নিতে পারবেন। প্রথম পণ্যটি আগে থেকেই নির্বাচিত
-              আছে। অগ্রিম মূল্য দেওয়ার প্রয়োজন নেই; ক্যাশ অন ডেলিভারি থাকলে পণ্য
-              হাতে পেয়ে পরিশোধ করুন।
-            </p>
-          </div>
-          {products.length ? (
-            <div className="grid gap-4 md:grid-cols-2">
-              {products.map((product) => {
-                const selection = selections[product._id] || { quantity: 0 };
-                const line = lineFor(product, selection);
-                const variations = productVariations(product);
-                const hasStock =
-                  product.type === PRODUCT_TYPE.VARIABLE
-                    ? variations.some(
-                        (variation) =>
-                          isVariationInStock(variation) &&
-                          inventoryAvailable(variation.inventory)
-                      )
-                    : inventoryAvailable(product.inventory);
-
-                return (
-                  <article
-                    key={product._id}
-                    className={`rounded-2xl border bg-background p-5 shadow-sm transition-colors ${selection.quantity ? "border-primary ring-1 ring-primary/20" : "border-border"}`}
-                  >
-                    <div className="flex gap-4">
-                      <div className="relative size-24 shrink-0 overflow-hidden rounded-xl bg-muted sm:size-28">
-                        <ProductPhoto
-                          src={
-                            product._id === primary?._id
-                              ? bulbFallback
-                              : line.variation?.image?.src ||
-                                product.thumbnail?.src
-                          }
-                          alt={product.title}
-                          fallback={
-                            product._id === primary?._id
-                              ? bulbFallback
-                              : "/placeholder.webp"
-                          }
-                          className="object-contain p-2"
-                          sizes="112px"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <label className="flex cursor-pointer items-start gap-3">
-                          <input
-                            type="checkbox"
-                            checked={selection.quantity > 0}
-                            disabled={
-                              selection.quantity === 0 &&
-                              (!hasStock || !line.inStock)
-                            }
-                            onChange={(event) =>
-                              setProductSelected(product, event.target.checked)
-                            }
-                            className="mt-1 size-5 shrink-0 accent-primary"
-                          />
-                          <span className="font-bold leading-6">
-                            {product.title}
-                          </span>
-                        </label>
-                        <div className="mt-2 flex flex-wrap items-center gap-2">
-                          <span className="text-lg font-extrabold text-primary">
-                            {taka(line.salePrice)}
-                          </span>
-                          {line.regularPrice > line.salePrice && (
-                            <span className="text-sm text-muted-foreground line-through">
-                              {taka(line.regularPrice)}
-                            </span>
-                          )}
-                        </div>
-                        {!hasStock && (
-                          <p className="mt-1 text-xs font-semibold text-destructive">
-                            স্টক শেষ
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    {variations.length > 0 && (
-                      <div className="mt-4 border-t border-border pt-2">
-                        <VariationSelector
-                          key={product._id}
-                          variations={variations}
-                          initialPrice={{
-                            regularPrice: line.regularPrice,
-                            salePrice: line.salePrice,
-                          }}
-                          onVariationChange={(variation) => {
-                            setSelections((current) => {
-                              const previous = current[product._id] || {
-                                quantity: 0,
-                              };
-                              if (previous.variationId === variation._id)
-                                return current;
-                              return {
-                                ...current,
-                                [product._id]: {
-                                  ...previous,
-                                  variationId: variation._id,
-                                },
-                              };
-                            });
-                          }}
-                        />
-                        {!line.inStock && (
-                          <p className="text-xs font-semibold text-destructive">
-                            এই ভ্যারিয়েন্টটি স্টকে নেই।
-                          </p>
-                        )}
-                      </div>
-                    )}
-                    <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-                      <span className="text-sm font-semibold">পরিমাণ</span>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="size-10 rounded-lg"
-                          aria-label={`${product.title} একটি কমান`}
-                          onClick={() => setQuantity(product, -1)}
-                          disabled={selection.quantity === 0}
-                        >
-                          <Minus aria-hidden />
-                        </Button>
-                        <span
-                          className="w-8 text-center font-bold tabular-nums"
-                          aria-live="polite"
-                        >
-                          {selection.quantity}
-                        </span>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          className="size-10 rounded-lg"
-                          aria-label={`${product.title} একটি বাড়ান`}
-                          onClick={() => setQuantity(product, 1)}
-                          disabled={!hasStock || !line.inStock}
-                        >
-                          <Plus aria-hidden />
-                        </Button>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-border bg-background p-8 text-center text-muted-foreground">
-              এই পেজে এখনো কোনো পণ্য যুক্ত করা হয়নি।
+          {availableProducts.length === 0 && (
+            <div className="mx-auto max-w-3xl rounded-2xl border border-slate-200 bg-white p-8 text-center text-slate-600">
+              এই মুহূর্তে অর্ডারের জন্য কোনো পণ্য পাওয়া যাচ্ছে না।
             </div>
           )}
-
-          {products.length > 0 && (
-            <div className="mt-10">
-              <div className="mb-6 text-center">
-                <h2 className="text-2xl font-bold sm:text-3xl">
-                  অর্ডার কনফার্ম করুন
-                </h2>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  নাম, মোবাইল নম্বর ও ঠিকানা দিয়ে সরাসরি অর্ডার দিন।
-                </p>
-              </div>
+          {availableProducts.length > 0 && (
+            <div className="mx-auto max-w-5xl">
               {shippingCharges.length && paymentMethods.length ? (
                 <OrderForm
                   lines={lines}
                   shippingCharges={shippingCharges}
                   paymentMethods={paymentMethods}
                   onRemoveProduct={removeProduct}
+                  productSelection={productSelection}
                 />
               ) : (
                 <p
