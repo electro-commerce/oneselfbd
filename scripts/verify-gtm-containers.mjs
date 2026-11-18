@@ -9,8 +9,8 @@ const readContainer = (file) => {
   assert.doesNotMatch(source, /techmela|G-GZERV29BVS|2188533918610069/i);
   return JSON.parse(source).containerVersion;
 };
-const web = readContainer("gtm-web-container-template.json");
-const server = readContainer("gtm-server-container-template.json");
+const web = readContainer("GTM/GTM-5DN7NRZL_WEB_CONTAINER.json");
+const server = readContainer("GTM/GTM-WP3WDF7L_SERVER_CONTAINER.json");
 const byName = (items, name) => {
   const item = items.find((entry) => entry.name === name);
   assert.ok(item, `Missing ${name}`);
@@ -33,6 +33,16 @@ const variablePath = (container, name) => {
   return param(variable, variable.type === "v" ? "name" : "keyPath").value;
 };
 
+const googleTag = byName(web.tag, "Google Tag");
+assert.equal(googleTag.type, "googtag");
+assert.deepEqual(googleTag.firingTriggerId, ["2147479573"]);
+assert.equal(googleTag.priority?.value, "100");
+assert.equal(
+  table(googleTag, "configSettingsTable").server_container_url,
+  "https://tracking.oneselfbd.com",
+);
+assert.equal(table(googleTag, "configSettingsTable").send_page_view, "false");
+
 for (const [container, usage] of [[web, "WEB"], [server, "SERVER"]]) {
   assert.ok(container.container.usageContext.includes(usage));
   const variables = new Set(container.variable.map((variable) => variable.name));
@@ -53,14 +63,24 @@ for (const [container, usage] of [[web, "WEB"], [server, "SERVER"]]) {
   }
 }
 
-for (const name of ["GA4", "Meta Pixel ="]) {
+for (const name of ["GA4", "Meta Pixel ID"]) {
   const val = param(byName(web.variable, name), "value").value;
   assert.ok(val && val.length > 0, `${name} must be non-empty`);
 }
-for (const name of ["FB - Pixel ID - REPLACE ME", "FB - Access Token - REPLACE ME", "FB - Test Event Code"]) {
-  const val = param(byName(server.variable, name), "value").value;
-  assert.ok(val && val.length > 0, `${name} must be non-empty`);
-}
+const pixelId = param(byName(server.variable, "FB - Pixel ID - REPLACE ME"), "value").value;
+assert.match(pixelId, /^\d+$/, "Meta Pixel ID must be numeric");
+const accessToken = param(byName(server.variable, "FB - Access Token - REPLACE ME"), "value").value;
+assert.ok(
+  accessToken === "REPLACE_WITH_META_CAPI_ACCESS_TOKEN" || accessToken.length >= 20,
+  "Meta access token must be a clear placeholder or a plausible token",
+);
+const testEventCode = byName(server.variable, "FB - Test Event Code");
+assert.equal(testEventCode.type, "ed");
+assert.equal(
+  param(testEventCode, "keyPath").value,
+  "meta_test_event_code_disabled",
+  "Production export must not set a Meta test event code",
+);
 assert.deepEqual(server.container.taggingServerUrls, ["https://tracking.oneselfbd.com"]);
 assert.equal(variablePath(web, "DLV - ecommerce.items"), "ecommerce.items");
 assert.equal(variablePath(web, "DLV - ecommerce.value"), "ecommerce.value");
@@ -112,35 +132,76 @@ const triggerFilter = (container, id) => {
   return { type: filter.type, arg0, arg1 };
 };
 
-assert.deepEqual(triggerFilter(web, "7"), {
+assert.deepEqual(triggerFilter(web, "158"), {
   type: "MATCH_REGEX",
   arg0: "{{_event}}",
   arg1: "^(begin_checkout|initiate_checkout)$",
 });
-assert.deepEqual(triggerFilter(web, "38"), {
+assert.deepEqual(triggerFilter(web, "176"), {
   type: "MATCH_REGEX",
   arg0: "{{_event}}",
   arg1: "^(view_item|view_content)$",
 });
-assert.deepEqual(triggerFilter(web, "131"), {
+assert.deepEqual(triggerFilter(web, "133"), {
   type: "MATCH_REGEX",
   arg0: "{{_event}}",
   arg1: "^(page_view|custom_page_view)$",
 });
-assert.deepEqual(triggerFilter(server, "38"), {
+assert.deepEqual(triggerFilter(server, "53"), {
   type: "MATCH_REGEX",
   arg0: "{{_event}}",
   arg1: "^(view_item|view_content)$",
 });
-assert.deepEqual(triggerFilter(server, "45"), {
+assert.deepEqual(triggerFilter(server, "49"), {
   type: "MATCH_REGEX",
   arg0: "{{_event}}",
   arg1: "^(begin_checkout|initiate_checkout)$",
 });
-assert.deepEqual(triggerFilter(server, "57"), {
+assert.deepEqual(triggerFilter(server, "50"), {
   type: "MATCH_REGEX",
   arg0: "{{_event}}",
   arg1: "^(page_view|custom_page_view)$",
 });
 
-console.log("GTM web/server container contract verified");
+assert.ok(
+  server.builtInVariable.some(
+    (variable) => variable.name === "Client Name" && variable.type === "CLIENT_NAME",
+  ),
+);
+const ga4ClientTrigger = byName(server.trigger, "GA4 Client");
+assert.equal(ga4ClientTrigger.type, "ALWAYS");
+assert.deepEqual(
+  ga4ClientTrigger.filter[0].parameter.map((entry) => entry.value),
+  ["{{Client Name}}", "GA4"],
+);
+const ga4Forwarding = byName(server.tag, "GA4 - All Events");
+assert.equal(ga4Forwarding.type, "sgtmgaaw");
+assert.deepEqual(ga4Forwarding.firingTriggerId, [ga4ClientTrigger.triggerId]);
+assert.equal(param(ga4Forwarding, "isMeasurementIdMandatory").value, "true");
+const excludedFields = new Set(
+  param(ga4Forwarding, "epToExclude").list.map(
+    (entry) => entry.map.find((cell) => cell.key === "fieldName")?.value,
+  ),
+);
+const metaMatchingFields = new Set(
+  web.tag
+    .filter((entry) => entry.name.startsWith("GA4 - "))
+    .flatMap((entry) =>
+      Object.keys(table(entry, "eventSettingsTable")).filter((field) =>
+        field.startsWith("meta_"),
+      ),
+    ),
+);
+for (const field of [
+  "event_id",
+  "email",
+  "phone",
+  "fbp",
+  "fbc",
+  "external_id",
+  ...metaMatchingFields,
+]) {
+  assert.ok(excludedFields.has(field), `GA4 forwarding leaks ${field}`);
+}
+
+process.stdout.write("GTM web/server container contract verified\n");
