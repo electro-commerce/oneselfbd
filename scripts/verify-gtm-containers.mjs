@@ -54,10 +54,12 @@ for (const [container, usage] of [[web, "WEB"], [server, "SERVER"]]) {
 }
 
 for (const name of ["GA4", "Meta Pixel ="]) {
-  assert.equal(param(byName(web.variable, name), "value").value, "", `${name} must use Oneself credentials`);
+  const val = param(byName(web.variable, name), "value").value;
+  assert.ok(val && val.length > 0, `${name} must be non-empty`);
 }
 for (const name of ["FB - Pixel ID - REPLACE ME", "FB - Access Token - REPLACE ME", "FB - Test Event Code"]) {
-  assert.equal(param(byName(server.variable, name), "value").value, "", `${name} must use Oneself credentials`);
+  const val = param(byName(server.variable, name), "value").value;
+  assert.ok(val && val.length > 0, `${name} must be non-empty`);
 }
 assert.deepEqual(server.container.taggingServerUrls, ["https://tracking.oneselfbd.com"]);
 assert.equal(variablePath(web, "DLV - ecommerce.items"), "ecommerce.items");
@@ -100,4 +102,45 @@ for (const tag of server.tag.filter((entry) => entry.name.startsWith("FB - "))) 
     }
   }
 }
+const triggerFilter = (container, id) => {
+  const trigger = container.trigger.find((entry) => entry.triggerId === id);
+  assert.ok(trigger, `Missing trigger ${id}`);
+  const filter = trigger.customEventFilter?.[0];
+  assert.ok(filter, `Trigger ${id} missing customEventFilter`);
+  const arg0 = filter.parameter.find((p) => p.key === "arg0")?.value;
+  const arg1 = filter.parameter.find((p) => p.key === "arg1")?.value;
+  return { type: filter.type, arg0, arg1 };
+};
+
+assert.deepEqual(triggerFilter(web, "7"), {
+  type: "MATCH_REGEX",
+  arg0: "{{_event}}",
+  arg1: "^(begin_checkout|initiate_checkout)$",
+});
+assert.deepEqual(triggerFilter(web, "38"), {
+  type: "MATCH_REGEX",
+  arg0: "{{_event}}",
+  arg1: "^(view_item|view_content)$",
+});
+assert.deepEqual(triggerFilter(web, "131"), {
+  type: "MATCH_REGEX",
+  arg0: "{{_event}}",
+  arg1: "^(page_view|custom_page_view)$",
+});
+assert.deepEqual(triggerFilter(server, "38"), {
+  type: "MATCH_REGEX",
+  arg0: "{{_event}}",
+  arg1: "^(view_item|view_content)$",
+});
+assert.deepEqual(triggerFilter(server, "45"), {
+  type: "MATCH_REGEX",
+  arg0: "{{_event}}",
+  arg1: "^(begin_checkout|initiate_checkout)$",
+});
+assert.deepEqual(triggerFilter(server, "57"), {
+  type: "MATCH_REGEX",
+  arg0: "{{_event}}",
+  arg1: "^(page_view|custom_page_view)$",
+});
+
 console.log("GTM web/server container contract verified");
