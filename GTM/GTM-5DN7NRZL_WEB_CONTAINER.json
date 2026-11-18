@@ -3066,7 +3066,7 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "https://tracking.oneselfbd.com"
+                                        "value": "{{Const - Server Container URL}}"
                                     }
                                 ]
                             },
@@ -9417,6 +9417,22 @@
                     }
                 ],
                 "fingerprint": "1794896606224",
+                "formatValue": {}
+            },
+            {
+                "accountId": "6400007515",
+                "containerId": "283583686",
+                "variableId": "186",
+                "name": "Const - Server Container URL",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "https://tracking.oneselfbd.com"
+                    }
+                ],
+                "fingerprint": "1794896947754",
                 "formatValue": {}
             },
             {
