@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Anek_Bangla } from "next/font/google";
 import Image from "next/image";
 import {
   ArrowRight, BadgeCheck, CheckCircle2, Globe, HandCoins, Lightbulb,
@@ -11,12 +10,10 @@ import {
 import UsageLocationShowcase from "./UsageLocationShowcase";
 import "./demo-landing.css";
 
-const anekBangla = Anek_Bangla({ subsets: ["bengali", "latin"], weight: ["600", "700", "800"], variable: "--font-anek-bangla" });
-
 export default function DemoLandingStory() {
   const [bulbImgError, setBulbImgError] = useState(false);
   return (
-    <div className={`${anekBangla.variable} pir-demo-story`}>
+    <div className="pir-demo-story">
         {/* FIRST SECTION: ONESELF BD BRAND COLOR HERO */}
         <section
           className="relative overflow-hidden text-white border-b border-[#0BA9D6]/30"
