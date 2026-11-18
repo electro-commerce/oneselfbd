@@ -66,13 +66,6 @@ type SelectedLine = {
 const taka = (amount: number) => `৳${amount.toLocaleString("bn-BD")}`;
 const bulbFallback = "/images/landing-page/pir-sensor-bulb/product.webp";
 
-function plainDescription(description?: string) {
-  return description
-    ?.replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
 function resolveProductPhotoSrc(src: string | undefined, fallback: string) {
   const resolved = getImageSrc(src);
   return resolved.includes("localhost:5000") ? fallback : resolved;
@@ -775,23 +768,6 @@ export default function SensorBulbLandingClient({
                         )}
                       </div>
                     </div>
-                    {plainDescription(product.shortDescription) && (
-                      <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                        {plainDescription(product.shortDescription)}
-                      </p>
-                    )}
-                    {product.attribute?.length > 0 && (
-                      <dl className="mt-4 grid gap-2 text-xs text-muted-foreground">
-                        {product.attribute.map((attribute) => (
-                          <div key={attribute.name} className="flex gap-2">
-                            <dt className="shrink-0 font-bold text-foreground">
-                              {attribute.name}:
-                            </dt>
-                            <dd>{attribute.values.join(", ")}</dd>
-                          </div>
-                        ))}
-                      </dl>
-                    )}
                     {variations.length > 0 && (
                       <div className="mt-4 border-t border-border pt-2">
                         <VariationSelector
