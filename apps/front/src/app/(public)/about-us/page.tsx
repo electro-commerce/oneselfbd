@@ -13,13 +13,13 @@ import {
 } from "react-icons/fa";
 
 export const metadata: Metadata = {
-  title: "আমাদের সম্পর্কে | TechMela",
+  title: "আমাদের সম্পর্কে | Oneself",
   description: `${SITE.nameBn} বাংলাদেশের একটি বিশ্বস্ত গ্যাজেট ও টেক এক্সেসরিজ ব্র্যান্ড। আমরা গুণগত মানসম্পন্ন ও অথেনটিক প্রযুক্তি পণ্য সরবরাহ করি।`,
   keywords: [
     SITE.nameBn,
     "টেক শপ বাংলাদেশ",
     "স্মার্ট গ্যাজেট শপ",
-    "About TechMela",
+    "About Oneself",
   ].join(", "),
   alternates: {
     canonical: `${SITE.baseUrl}/about-us`,

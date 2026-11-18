@@ -36,6 +36,7 @@ export type CustomData = {
   num_items?: number; // Total number of items in this event
   predicted_ltv?: number; // Predicted lifetime value of the customer
   shipping?: number; // Shipping cost for the transaction
+  shipping_tier?: string; // Selected delivery option for GA4
   tax?: number; // Tax amount for the transaction
   discount_value?: number; // Total discount value applied
   coupon?: string; // Coupon or promo code used

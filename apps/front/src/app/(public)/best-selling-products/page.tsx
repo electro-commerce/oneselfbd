@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import BestSellingContent from "./components/BestSellingContent";
 
 export const metadata: Metadata = {
-  title: "সেরা বিক্রিত পণ্যসমূহ | TechMela",
+  title: "সেরা বিক্রিত পণ্যসমূহ | Oneself",
   description: `${SITE.nameBn}-এর সবচেয়ে জনপ্রিয় এবং সর্বাধিক বিক্রিত গ্যাজেট ও প্রযুক্তি পণ্য। গ্রাহকদের পছন্দের সেরা কালেকশন দেখুন।`,
   keywords: [
     "সেরা বিক্রিত গ্যাজেট",

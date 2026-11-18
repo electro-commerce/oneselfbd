@@ -5,7 +5,7 @@ import SelectShippingAreaFetcher from "./components/SelectShippingAreaFetcher";
 import { ShieldCheck, ShoppingBag } from "lucide-react";
 
 export const metadata = {
-  title: "চেকআউট | TechMela",
+  title: "চেকআউট | Oneself",
   description: "সহজ ডেলিভারি এবং সম্পূর্ণ নিরাপদ পেমেন্টে আপনার অর্ডার সম্পন্ন করুন",
 };
 

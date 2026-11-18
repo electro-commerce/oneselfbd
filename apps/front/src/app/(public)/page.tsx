@@ -23,8 +23,6 @@ export const metadata: Metadata = {
   keywords: [
     SITE.nameBn,
     SITE.nameEn,
-    "টেকমেল্লা",
-    "TechMela",
     "অনলাইন গ্যাজেট শপ",
     "স্মার্ট গ্যাজেট বাংলাদেশ",
     "ইলেকট্রনিক্স বাংলাদেশ",

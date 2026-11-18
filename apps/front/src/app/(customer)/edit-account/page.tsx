@@ -11,7 +11,7 @@ const EditAccountForm = dynamic(() => import("./components/EditAccountForm"), {
 });
 
 export const metadata = {
-  title: "অ্যাকাউন্ট সম্পাদনা | TechMela",
+  title: "অ্যাকাউন্ট সম্পাদনা | Oneself",
 };
 
 const EditAccountPage = () => {

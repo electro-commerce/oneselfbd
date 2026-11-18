@@ -85,7 +85,7 @@ const DashboardClient = () => {
               !
             </h1>
             <p className="text-muted-foreground text-sm">
-              TechMela-তে আপনাকে স্বাগতম।
+              Oneself-তে আপনাকে স্বাগতম।
             </p>
           </div>
           <div className="hidden lg:block">

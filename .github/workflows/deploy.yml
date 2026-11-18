@@ -116,6 +116,9 @@ jobs:
           if missing:
               raise SystemExit('Missing build environment variables: ' + ', '.join(sorted(missing)))
           if os.environ['APP_NAME'] == 'front':
+              match = re.search(r'^\s*NEXT_PUBLIC_FRONT_GTM_ID\s*=\s*["\']?(GTM-[A-Z0-9]+)["\']?\s*$', os.environ['ENV_CONTENT'], re.M)
+              if not match:
+                  raise SystemExit('Missing or invalid NEXT_PUBLIC_FRONT_GTM_ID in FRONT_ENV_PRODUCTION')
               legacy = {key for key in keys if not key.startswith(prefix)}
               if legacy:
                   raise SystemExit('Rename storefront variables to NEXT_PUBLIC_FRONT_: ' + ', '.join(sorted(legacy)))
@@ -235,6 +238,19 @@ jobs:
               }).then(async response => {
                 if (!response.ok || (await response.json()).revalidated !== true) {
                   throw new Error("Storefront revalidation failed: HTTP " + response.status);
+                }
+              }).catch(error => { console.error(error.message); process.exit(1); });
+            '
+
+            # The landing page requires a server-only product ID list at runtime.
+            # Fail the deployment if the storefront silently renders without its order form.
+            docker compose -f docker-compose.prod.yml exec -T front node -e '
+              fetch("http://127.0.0.1:3000/smart-pir-motion-sensor-led-bulb", {
+                signal: AbortSignal.timeout(30000)
+              }).then(async response => {
+                const html = await response.text();
+                if (!response.ok || !html.includes("pir-landing-payment")) {
+                  throw new Error("PIR landing checkout is unavailable: HTTP " + response.status);
                 }
               }).catch(error => { console.error(error.message); process.exit(1); });
             '

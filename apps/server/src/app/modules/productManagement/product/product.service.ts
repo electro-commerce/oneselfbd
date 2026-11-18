@@ -171,10 +171,13 @@ const createProductIntoDB = async (
 };
 
 const getAProductCustomerFromDB = async (slug: string) => {
+  const productIdentifier = /^[a-f\d]{24}$/i.test(slug)
+    ? { $or: [{ slug }, { _id: new mongoose.Types.ObjectId(slug) }] }
+    : { slug };
   const pipeline = [
     {
       $match: {
-        slug: slug,
+        ...productIdentifier,
         isDeleted: false,
         publishedStatus: PRODUCT_STATUS.PUBLISHED,
       },
