@@ -245,7 +245,7 @@ jobs:
             # The landing page requires a server-only product ID list at runtime.
             # Fail the deployment if the storefront silently renders without its order form.
             docker compose -f docker-compose.prod.yml exec -T front node -e '
-              fetch("http://127.0.0.1:3000/smart-pir-motion-sensor-led-bulb", {
+              fetch("http://127.0.0.1:3000/steps/smart-pir-motion-sensor-led-bulb", {
                 signal: AbortSignal.timeout(30000)
               }).then(async response => {
                 const html = await response.text();
