@@ -7,7 +7,6 @@ import VariationSelector from "@/app/(public)/product/[slug]/components/Variatio
 import OrderLimit from "@/components/orderLimit/OrderLimit";
 import ContainerMax from "@/components/shared/containerMax/ContainerMax";
 import { Button } from "@/components/ui/button";
-import { SITE } from "@/const/site.const";
 import { PRODUCT_TYPE, STOCK_STATUS } from "@/const/product.const";
 import { isValidBdPhone } from "@/const/validation.const";
 import useCheckoutLogic from "@/hooks/useCheckoutLogic";
@@ -26,21 +25,14 @@ import { TPaymentMethod } from "@/types/paymentMethod";
 import { TSingleProduct, TVariations } from "@/types/products/singleProduct";
 import TShippingCharges from "@/types/shippingCharge";
 import {
-  BadgeCheck,
-  Lightbulb,
   Minus,
   Plus,
-  Radar,
-  ShieldCheck,
-  SunMoon,
-  Timer,
-  Truck,
   X,
 } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
-import SensorBulbStorySections from "./SensorBulbStorySections";
+import DemoLandingStory from "./DemoLandingStory";
 
 type Props = {
   products: TSingleProduct[];
@@ -475,7 +467,6 @@ export default function SensorBulbLandingClient({
       ])
     )
   );
-  const orderRef = useRef<HTMLElement>(null);
   const primary = products[0];
 
   const lines = products
@@ -553,131 +544,12 @@ export default function SensorBulbLandingClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [primary?._id]);
 
-  const scrollToOrder = () =>
-    orderRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-
   return (
     <main className="dark min-h-screen bg-[#031b2e] text-white">
-      <div className="border-b border-sky-300/20 bg-[#021322] px-4 py-2 text-center text-sm font-semibold text-sky-100">
-        সরাসরি অর্ডার করুন · সারাদেশে ডেলিভারি
-      </div>
-      <header className="border-b border-sky-300/20 bg-[#031b2e]">
-        <ContainerMax className="flex items-center justify-between gap-4 py-3">
-          <a
-            href="/"
-            aria-label="Oneself হোম"
-            className="rounded-xl bg-white px-3 py-1"
-          >
-            <Image
-              src="/logo/logo.png"
-              alt="Oneself"
-              width={140}
-              height={48}
-              className="h-11 w-auto object-contain"
-              priority
-            />
-          </a>
-          <a
-            href={`tel:${SITE.phone}`}
-            className="text-sm font-bold text-sky-300 hover:underline"
-          >
-            {SITE.phoneDisplay}
-          </a>
-        </ContainerMax>
-      </header>
-
-      <section className="overflow-hidden bg-gradient-to-br from-[#031b2e] via-[#053b66] to-[#0ba9d6] py-12 sm:py-16">
-        <ContainerMax className="text-center">
-          <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border border-sky-300/25 bg-[#021322] px-5 py-10 shadow-2xl sm:px-10 sm:py-16">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(251,191,36,0.18),transparent_65%)]" />
-            <div className="relative mx-auto mb-5 size-24 overflow-hidden rounded-full border border-amber-300/40 shadow-[0_0_45px_rgba(251,191,36,0.25)] sm:size-28">
-              <ProductPhoto
-                src={bulbFallback}
-                alt=""
-                fallback={bulbFallback}
-                className="object-cover"
-                sizes="112px"
-              />
-            </div>
-            <p className="relative mb-4 text-sm font-bold uppercase tracking-widest text-sky-300">
-              OneSelf BD · Smart PIR Motion Sensor LED Bulb
-            </p>
-            <h1 className="relative text-3xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
-              মানুষ আসলেই{" "}
-              <span className="text-amber-300">জ্বলে উঠবে লাইট,</span>
-              <span className="mt-2 block">চলে গেলেই অটোমেটিক বন্ধ!</span>
-            </h1>
-          </div>
-          <div className="mx-auto my-7 flex max-w-sm items-center gap-4">
-            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-300" />
-            <div className="flex size-10 items-center justify-center rounded-full bg-amber-400 text-slate-950 shadow-[0_0_28px_rgba(251,191,36,0.7)]">
-              <Lightbulb className="size-5" aria-hidden />
-            </div>
-            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-300" />
-          </div>
-          <p className="mx-auto max-w-3xl rounded-2xl border border-white/20 bg-[#021320]/50 px-5 py-5 text-base leading-8 text-sky-50 sm:text-xl">
-            রাতে সিঁড়িঘর, বারান্দা, বাথরুম কিংবা গ্যারাজের সুইচ অন-অফ করার
-            ঝামেলা ভুলে যান। OneSelf BD-এর স্মার্ট পিআইআর সেন্সর লাইট মানুষের
-            উপস্থিতি শনাক্ত করে স্বয়ংক্রিয়ভাবে জ্বলে ওঠে এবং প্রয়োজন না হলে নিভে
-            যায়। বিদ্যুৎ বিল কমাতে সাহায্য করে ৮৫% পর্যন্ত।
-          </p>
-          <div className="mx-auto mt-7 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              { icon: Radar, text: "১৫ ফিটের ভেতর মানুষ এলে আলো জ্বলে" },
-              { icon: SunMoon, text: "দিনের বেলা অটো বন্ধ" },
-              { icon: Timer, text: "চলে গেলে ৩০ সেকেন্ড পর বন্ধ" },
-              { icon: Lightbulb, text: "উপযুক্ত হোল্ডারে লাগান" },
-            ].map(({ icon: Icon, text }) => (
-              <div
-                key={text}
-                className="rounded-2xl border border-sky-300/25 bg-gradient-to-b from-[#0c507a] to-[#031e30] p-4 shadow-lg"
-              >
-                <Icon className="mx-auto size-7 text-amber-300" aria-hidden />
-                <p className="mt-2 text-sm font-semibold leading-5 text-white">
-                  {text}
-                </p>
-              </div>
-            ))}
-          </div>
-          {primary && (
-            <p className="mt-7 text-2xl font-extrabold text-amber-300">
-              {taka(
-                lineFor(primary, selections[primary._id] || { quantity: 1 })
-                  .salePrice
-              )}{" "}
-              থেকে শুরু
-            </p>
-          )}
-          <Button
-            onClick={scrollToOrder}
-            size="lg"
-            className="mt-6 min-h-12 rounded-xl bg-amber-400 px-8 text-base font-bold text-slate-950 shadow-lg hover:bg-amber-300"
-            disabled={!products.length}
-          >
-            পণ্য বেছে অর্ডার করুন
-          </Button>
-          <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-sky-100">
-            <span className="inline-flex items-center gap-2">
-              <BadgeCheck className="size-4 text-amber-300" aria-hidden /> সহজ
-              অর্ডার
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <Truck className="size-4 text-amber-300" aria-hidden /> সারাদেশে
-              ডেলিভারি
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <ShieldCheck className="size-4 text-amber-300" aria-hidden />{" "}
-              নিরাপদ কেনাকাটা
-            </span>
-          </div>
-        </ContainerMax>
-      </section>
-
-      <SensorBulbStorySections primary={primary} onOrderClick={scrollToOrder} />
+      <DemoLandingStory />
 
       <section
-        ref={orderRef}
-        id="order"
+        id="order-checkout"
         className="pir-checkout scroll-mt-6 bg-[#f8fafc] py-12 text-slate-900 sm:py-16"
       >
         <ContainerMax>
@@ -874,15 +746,6 @@ export default function SensorBulbLandingClient({
           )}
         </ContainerMax>
       </section>
-      <footer className="border-t border-sky-300/20 bg-[#021322] py-6 text-center text-sm text-sky-100/75">
-        © {new Date().getFullYear()} {SITE.nameEn} ·{" "}
-        <a
-          href={`tel:${SITE.phone}`}
-          className="font-semibold text-sky-300 hover:underline"
-        >
-          {SITE.phoneDisplay}
-        </a>
-      </footer>
     </main>
   );
 }
