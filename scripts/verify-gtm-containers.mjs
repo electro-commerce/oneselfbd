@@ -39,9 +39,13 @@ assert.deepEqual(googleTag.firingTriggerId, ["2147479573"]);
 assert.equal(googleTag.priority?.value, "100");
 assert.equal(
   table(googleTag, "configSettingsTable").server_container_url,
-  "https://tracking.oneselfbd.com",
+  "{{Const - Server Container URL}}",
 );
 assert.equal(table(googleTag, "configSettingsTable").send_page_view, "false");
+assert.equal(
+  param(byName(web.variable, "Const - Server Container URL"), "value").value,
+  "https://tracking.oneselfbd.com",
+);
 
 for (const [container, usage] of [[web, "WEB"], [server, "SERVER"]]) {
   assert.ok(container.container.usageContext.includes(usage));
