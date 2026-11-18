@@ -3066,7 +3066,7 @@
                                     {
                                         "type": "TEMPLATE",
                                         "key": "parameterValue",
-                                        "value": "https://tracking.oneselfbd.com/"
+                                        "value": "https://tracking.oneselfbd.com"
                                     }
                                 ]
                             },
@@ -3090,7 +3090,7 @@
                 ],
                 "fingerprint": "1794896947754",
                 "firingTriggerId": [
-                    "2147479553"
+                    "2147479573"
                 ],
                 "tagFiringOption": "ONCE_PER_EVENT",
                 "monitoringMetadata": {
@@ -3098,6 +3098,10 @@
                 },
                 "consentSettings": {
                     "consentStatus": "NOT_SET"
+                },
+                "priority": {
+                    "type": "INTEGER",
+                    "value": "100"
                 }
             },
             {
