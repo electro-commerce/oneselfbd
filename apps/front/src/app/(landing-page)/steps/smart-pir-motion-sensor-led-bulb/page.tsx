@@ -5,6 +5,7 @@ import TShippingCharges from "@/types/shippingCharge";
 import serverSideFetcher from "@/utilities/serverSideFetcher";
 import { Metadata } from "next";
 import SensorBulbLandingClient from "./SensorBulbLandingClient";
+import { landingProductAvailable } from "./productAvailability";
 
 const pageTitle = "Smart PIR Motion Sensor LED Bulb";
 const pagePath = "/steps/smart-pir-motion-sensor-led-bulb";
@@ -41,7 +42,9 @@ async function loadProducts() {
       return response.success && response.data?._id ? response.data : null;
     })
   );
-  return results.filter((product): product is TSingleProduct => !!product);
+  return results
+    .filter((product): product is TSingleProduct => !!product)
+    .filter(landingProductAvailable);
 }
 
 export async function generateMetadata(): Promise<Metadata> {
