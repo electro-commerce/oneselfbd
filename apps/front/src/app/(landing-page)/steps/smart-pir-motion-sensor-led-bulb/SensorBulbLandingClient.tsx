@@ -25,7 +25,18 @@ import { TShippingInfo } from "@/types/order/shippingInfo";
 import { TPaymentMethod } from "@/types/paymentMethod";
 import { TSingleProduct, TVariations } from "@/types/products/singleProduct";
 import TShippingCharges from "@/types/shippingCharge";
-import { BadgeCheck, Minus, Plus, ShieldCheck, Truck } from "lucide-react";
+import {
+  BadgeCheck,
+  Lightbulb,
+  Minus,
+  Plus,
+  Radar,
+  ShieldCheck,
+  SunMoon,
+  Timer,
+  Truck,
+  X,
+} from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
@@ -54,6 +65,13 @@ type SelectedLine = {
 
 const taka = (amount: number) => `৳${amount.toLocaleString("bn-BD")}`;
 const bulbFallback = "/images/landing-page/pir-sensor-bulb/product.webp";
+
+function plainDescription(description?: string) {
+  return description
+    ?.replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 function resolveProductPhotoSrc(src: string | undefined, fallback: string) {
   const resolved = getImageSrc(src);
@@ -148,14 +166,22 @@ function OrderForm({
   lines,
   shippingCharges,
   paymentMethods,
+  onRemoveProduct,
 }: {
   lines: SelectedLine[];
   shippingCharges: TShippingCharges[];
   paymentMethods: TPaymentMethod[];
+  // eslint-disable-next-line no-unused-vars
+  onRemoveProduct: (productId: string) => void;
 }) {
   const methods = useForm<CheckoutData>({ mode: "onSubmit" });
   const subtotal = lines.reduce(
     (total, line) => total + line.salePrice * line.quantity,
+    0
+  );
+  const savings = lines.reduce(
+    (total, line) =>
+      total + Math.max(0, line.regularPrice - line.salePrice) * line.quantity,
     0
   );
   const { calculatedTotal } = useCheckoutLogic({ totalCost: subtotal });
@@ -204,73 +230,26 @@ function OrderForm({
   const checkoutTrackingPromise = useRef<Promise<void> | null>(null);
   const shippingTrackedFor = useRef<string | null>(null);
   const shippingTrackingPromise = useRef<Promise<void> | null>(null);
-  const trackCheckout = useCallback((customer: TShippingInfo) => {
-    if (
-      checkoutTracked.current ||
-      !customer?.fullName?.trim() ||
-      !isValidBdPhone(customer.phoneNumber) ||
-      lines.length === 0
-    )
-      return;
+  const trackCheckout = useCallback(
+    (customer: TShippingInfo) => {
+      if (
+        checkoutTracked.current ||
+        !customer?.fullName?.trim() ||
+        !isValidBdPhone(customer.phoneNumber) ||
+        lines.length === 0
+      )
+        return;
 
-    checkoutTracked.current = true;
-    checkoutTrackingPromise.current = eventHandler({
-      event_name: "initiate_checkout",
-      fullName: customer.fullName,
-      ph: customer.phoneNumber,
-      em: customer.email || undefined,
-      content_type: "product",
-      content_ids: lines.map((line) =>
-        getTrackingItemId(line.product._id, line.variation?._id)
-      ),
-      contents: lines.map((line) => ({
-        id: getTrackingItemId(line.product._id, line.variation?._id),
-        name: line.product.title,
-        brand: line.product.brand?.name,
-        category: line.product.category?.[0]?.name,
-        variant: getVariantLabel(line.variation),
-        quantity: line.quantity,
-        item_price: line.salePrice,
-      })),
-      value: subtotal,
-    });
-  }, [lines, subtotal]);
-  useEffect(() => {
-    if (shipping) trackCheckout(shipping);
-  }, [shipping, trackCheckout]);
-
-  const trackShipping = useCallback((customer: TShippingInfo) => {
-    const shippingSelectionKey = JSON.stringify({
-      shippingId: selectedShipping._id,
-      shippingAmount: selectedShipping.amount,
-      items: lines.map((line) => ({
-        id: getTrackingItemId(line.product._id, line.variation?._id),
-        quantity: line.quantity,
-      })),
-    });
-    if (
-      !customer?.fullAddress?.trim() ||
-      !customer?.fullName?.trim() ||
-      !isValidBdPhone(customer.phoneNumber) ||
-      !selectedShipping._id ||
-      shippingTrackedFor.current === shippingSelectionKey ||
-      lines.length === 0
-    ) return;
-
-    trackCheckout(customer);
-    shippingTrackedFor.current = shippingSelectionKey;
-    const shippingTier = shippingCharges.find(
-      (charge) => charge._id === selectedShipping._id
-    )?.name;
-    shippingTrackingPromise.current = (async () => {
-      await checkoutTrackingPromise.current?.catch(() => undefined);
-      await eventHandler({
-        event_name: "add_shipping_info",
+      checkoutTracked.current = true;
+      checkoutTrackingPromise.current = eventHandler({
+        event_name: "initiate_checkout",
         fullName: customer.fullName,
         ph: customer.phoneNumber,
         em: customer.email || undefined,
-        upazila_id: customer.upazila,
         content_type: "product",
+        content_ids: lines.map((line) =>
+          getTrackingItemId(line.product._id, line.variation?._id)
+        ),
         contents: lines.map((line) => ({
           id: getTrackingItemId(line.product._id, line.variation?._id),
           name: line.product.title,
@@ -281,11 +260,65 @@ function OrderForm({
           item_price: line.salePrice,
         })),
         value: subtotal,
-        shipping: selectedShipping.amount,
-        shipping_tier: shippingTier,
       });
-    })();
-  }, [lines, selectedShipping, shippingCharges, subtotal, trackCheckout]);
+    },
+    [lines, subtotal]
+  );
+  useEffect(() => {
+    if (shipping) trackCheckout(shipping);
+  }, [shipping, trackCheckout]);
+
+  const trackShipping = useCallback(
+    (customer: TShippingInfo) => {
+      const shippingSelectionKey = JSON.stringify({
+        shippingId: selectedShipping._id,
+        shippingAmount: selectedShipping.amount,
+        items: lines.map((line) => ({
+          id: getTrackingItemId(line.product._id, line.variation?._id),
+          quantity: line.quantity,
+        })),
+      });
+      if (
+        !customer?.fullAddress?.trim() ||
+        !customer?.fullName?.trim() ||
+        !isValidBdPhone(customer.phoneNumber) ||
+        !selectedShipping._id ||
+        shippingTrackedFor.current === shippingSelectionKey ||
+        lines.length === 0
+      )
+        return;
+
+      trackCheckout(customer);
+      shippingTrackedFor.current = shippingSelectionKey;
+      const shippingTier = shippingCharges.find(
+        (charge) => charge._id === selectedShipping._id
+      )?.name;
+      shippingTrackingPromise.current = (async () => {
+        await checkoutTrackingPromise.current?.catch(() => undefined);
+        await eventHandler({
+          event_name: "add_shipping_info",
+          fullName: customer.fullName,
+          ph: customer.phoneNumber,
+          em: customer.email || undefined,
+          upazila_id: customer.upazila,
+          content_type: "product",
+          contents: lines.map((line) => ({
+            id: getTrackingItemId(line.product._id, line.variation?._id),
+            name: line.product.title,
+            brand: line.product.brand?.name,
+            category: line.product.category?.[0]?.name,
+            variant: getVariantLabel(line.variation),
+            quantity: line.quantity,
+            item_price: line.salePrice,
+          })),
+          value: subtotal,
+          shipping: selectedShipping.amount,
+          shipping_tier: shippingTier,
+        });
+      })();
+    },
+    [lines, selectedShipping, shippingCharges, subtotal, trackCheckout]
+  );
   useEffect(() => {
     if (shipping) trackShipping(shipping);
   }, [shipping, trackShipping]);
@@ -327,7 +360,7 @@ function OrderForm({
                   lines.map((line) => (
                     <div
                       key={line.product._id}
-                      className="flex justify-between gap-4 py-3 text-sm"
+                      className="flex items-center justify-between gap-4 py-3 text-sm"
                     >
                       <div>
                         <p className="font-semibold text-foreground">
@@ -339,9 +372,21 @@ function OrderForm({
                           </p>
                         )}
                       </div>
-                      <span className="shrink-0 font-bold text-foreground">
-                        {taka(line.salePrice * line.quantity)}
-                      </span>
+                      <div className="flex shrink-0 items-center gap-2">
+                        <span className="font-bold text-foreground">
+                          {taka(line.salePrice * line.quantity)}
+                        </span>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className="size-10 text-muted-foreground hover:text-destructive"
+                          aria-label={`${line.product.title} অর্ডার থেকে সরান`}
+                          onClick={() => onRemoveProduct(line.product._id)}
+                        >
+                          <X className="size-4" aria-hidden />
+                        </Button>
+                      </div>
                     </div>
                   ))
                 ) : (
@@ -355,6 +400,12 @@ function OrderForm({
                 <span>পণ্যের মূল্য</span>
                 <span>{taka(subtotal)}</span>
               </div>
+              {savings > 0 && (
+                <div className="mt-2 flex justify-between text-sm font-semibold text-emerald-700">
+                  <span>ডিসকাউন্ট সাশ্রয়</span>
+                  <span>{taka(savings)}</span>
+                </div>
+              )}
               <div className="mt-3 flex justify-between text-lg font-bold text-foreground">
                 <span>সর্বমোট</span>
                 <span className="text-primary">{taka(calculatedTotal)}</span>
@@ -458,6 +509,26 @@ export default function SensorBulbLandingClient({
     });
   };
 
+  const setProductSelected = (product: TSingleProduct, selected: boolean) => {
+    setSelections((current) => {
+      const previous = current[product._id] || { quantity: 0 };
+      return {
+        ...current,
+        [product._id]: {
+          ...previous,
+          quantity: selected ? Math.max(1, previous.quantity) : 0,
+        },
+      };
+    });
+  };
+
+  const removeProduct = (productId: string) => {
+    setSelections((current) => ({
+      ...current,
+      [productId]: { ...current[productId], quantity: 0 },
+    }));
+  };
+
   useEffect(() => {
     if (!primary) return;
     const variation = selectedVariation(
@@ -493,13 +564,17 @@ export default function SensorBulbLandingClient({
     orderRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="border-b border-primary/20 bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground">
+    <main className="dark min-h-screen bg-[#031b2e] text-white">
+      <div className="border-b border-sky-300/20 bg-[#021322] px-4 py-2 text-center text-sm font-semibold text-sky-100">
         সরাসরি অর্ডার করুন · সারাদেশে ডেলিভারি
       </div>
-      <header className="border-b border-border bg-background">
+      <header className="border-b border-sky-300/20 bg-[#031b2e]">
         <ContainerMax className="flex items-center justify-between gap-4 py-3">
-          <a href="/" aria-label="Oneself হোম">
+          <a
+            href="/"
+            aria-label="Oneself হোম"
+            className="rounded-xl bg-white px-3 py-1"
+          >
             <Image
               src="/logo/logo.png"
               alt="Oneself"
@@ -511,66 +586,96 @@ export default function SensorBulbLandingClient({
           </a>
           <a
             href={`tel:${SITE.phone}`}
-            className="text-sm font-bold text-primary hover:underline"
+            className="text-sm font-bold text-sky-300 hover:underline"
           >
             {SITE.phoneDisplay}
           </a>
         </ContainerMax>
       </header>
 
-      <section className="bg-primary/5 py-12 sm:py-16">
-        <ContainerMax className="grid items-center gap-10 lg:grid-cols-2">
-          <div>
-            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-primary">
-              Oneself স্মার্ট লাইটিং
-            </p>
-            <h1 className="max-w-2xl text-3xl font-extrabold leading-tight text-foreground sm:text-5xl">
-              Smart PIR Motion Sensor LED Bulb
-            </h1>
-            <p className="mt-5 max-w-xl text-base leading-8 text-muted-foreground sm:text-lg">
-              চলাচল বুঝে আলো জ্বলে, প্রয়োজন না হলে নিভে যায়। ঘরের প্রয়োজন
-              অনুযায়ী পণ্য বেছে নিয়ে সরাসরি অর্ডার করুন।
-            </p>
-            {primary && (
-              <p className="mt-5 text-2xl font-extrabold text-primary">
-                {taka(
-                  lineFor(primary, selections[primary._id] || { quantity: 1 })
-                    .salePrice
-                )}{" "}
-                থেকে শুরু
-              </p>
-            )}
-            <Button
-              onClick={scrollToOrder}
-              size="lg"
-              className="mt-6 min-h-12 rounded-xl px-8 text-base font-bold"
-              disabled={!products.length}
-            >
-              পণ্য বেছে অর্ডার করুন
-            </Button>
-            <div className="mt-7 flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-foreground">
-              <span className="inline-flex items-center gap-2">
-                <BadgeCheck className="size-4 text-primary" aria-hidden /> সহজ
-                অর্ডার
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <Truck className="size-4 text-primary" aria-hidden /> সারাদেশে
-                ডেলিভারি
-              </span>
-              <span className="inline-flex items-center gap-2">
-                <ShieldCheck className="size-4 text-primary" aria-hidden />{" "}
-                নিরাপদ কেনাকাটা
-              </span>
+      <section className="overflow-hidden bg-gradient-to-br from-[#031b2e] via-[#053b66] to-[#0ba9d6] py-12 sm:py-16">
+        <ContainerMax className="text-center">
+          <div className="relative mx-auto max-w-5xl overflow-hidden rounded-3xl border border-sky-300/25 bg-[#021322] px-5 py-10 shadow-2xl sm:px-10 sm:py-16">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(251,191,36,0.18),transparent_65%)]" />
+            <div className="relative mx-auto mb-5 size-24 overflow-hidden rounded-full border border-amber-300/40 shadow-[0_0_45px_rgba(251,191,36,0.25)] sm:size-28">
+              <ProductPhoto
+                src={bulbFallback}
+                alt=""
+                fallback={bulbFallback}
+                className="object-cover"
+                sizes="112px"
+              />
             </div>
+            <p className="relative mb-4 text-sm font-bold uppercase tracking-widest text-sky-300">
+              OneSelf BD · Smart PIR Motion Sensor LED Bulb
+            </p>
+            <h1 className="relative text-3xl font-extrabold leading-tight text-white sm:text-5xl lg:text-6xl">
+              মানুষ আসলেই{" "}
+              <span className="text-amber-300">জ্বলে উঠবে লাইট,</span>
+              <span className="mt-2 block">চলে গেলেই অটোমেটিক বন্ধ!</span>
+            </h1>
           </div>
-          <div className="relative mx-auto aspect-square w-full max-w-lg overflow-hidden rounded-3xl border border-border bg-background shadow-lg">
-            <ProductPhoto
-              src={bulbFallback}
-              alt={primary?.title || "Smart PIR Motion Sensor LED Bulb"}
-              fallback={bulbFallback}
-              className="object-contain p-8"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
+          <div className="mx-auto my-7 flex max-w-sm items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-300" />
+            <div className="flex size-10 items-center justify-center rounded-full bg-amber-400 text-slate-950 shadow-[0_0_28px_rgba(251,191,36,0.7)]">
+              <Lightbulb className="size-5" aria-hidden />
+            </div>
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-300" />
+          </div>
+          <p className="mx-auto max-w-3xl rounded-2xl border border-white/20 bg-[#021320]/50 px-5 py-5 text-base leading-8 text-sky-50 sm:text-xl">
+            রাতে সিঁড়িঘর, বারান্দা, বাথরুম কিংবা গ্যারাজের সুইচ অন-অফ করার
+            ঝামেলা ভুলে যান। OneSelf BD-এর স্মার্ট পিআইআর সেন্সর লাইট মানুষের
+            উপস্থিতি শনাক্ত করে স্বয়ংক্রিয়ভাবে জ্বলে ওঠে এবং প্রয়োজন না হলে নিভে
+            যায়। বিদ্যুৎ বিল কমাতে সাহায্য করে ৮৫% পর্যন্ত।
+          </p>
+          <div className="mx-auto mt-7 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-4">
+            {[
+              { icon: Radar, text: "১৫ ফিটের ভেতর মানুষ এলে আলো জ্বলে" },
+              { icon: SunMoon, text: "দিনের বেলা অটো বন্ধ" },
+              { icon: Timer, text: "চলে গেলে ৩০ সেকেন্ড পর বন্ধ" },
+              { icon: Lightbulb, text: "উপযুক্ত হোল্ডারে লাগান" },
+            ].map(({ icon: Icon, text }) => (
+              <div
+                key={text}
+                className="rounded-2xl border border-sky-300/25 bg-gradient-to-b from-[#0c507a] to-[#031e30] p-4 shadow-lg"
+              >
+                <Icon className="mx-auto size-7 text-amber-300" aria-hidden />
+                <p className="mt-2 text-sm font-semibold leading-5 text-white">
+                  {text}
+                </p>
+              </div>
+            ))}
+          </div>
+          {primary && (
+            <p className="mt-7 text-2xl font-extrabold text-amber-300">
+              {taka(
+                lineFor(primary, selections[primary._id] || { quantity: 1 })
+                  .salePrice
+              )}{" "}
+              থেকে শুরু
+            </p>
+          )}
+          <Button
+            onClick={scrollToOrder}
+            size="lg"
+            className="mt-6 min-h-12 rounded-xl bg-amber-400 px-8 text-base font-bold text-slate-950 shadow-lg hover:bg-amber-300"
+            disabled={!products.length}
+          >
+            পণ্য বেছে অর্ডার করুন
+          </Button>
+          <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm font-medium text-sky-100">
+            <span className="inline-flex items-center gap-2">
+              <BadgeCheck className="size-4 text-amber-300" aria-hidden /> সহজ
+              অর্ডার
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <Truck className="size-4 text-amber-300" aria-hidden /> সারাদেশে
+              ডেলিভারি
+            </span>
+            <span className="inline-flex items-center gap-2">
+              <ShieldCheck className="size-4 text-amber-300" aria-hidden />{" "}
+              নিরাপদ কেনাকাটা
+            </span>
           </div>
         </ContainerMax>
       </section>
@@ -580,17 +685,20 @@ export default function SensorBulbLandingClient({
       <section
         ref={orderRef}
         id="order"
-        className="scroll-mt-6 bg-muted/40 py-12 sm:py-16"
+        className="pir-checkout scroll-mt-6 bg-[#f8fafc] py-12 text-slate-900 sm:py-16"
       >
         <ContainerMax>
           <div className="mb-8 max-w-2xl">
-            <p className="text-sm font-bold text-primary">আপনার পছন্দ</p>
+            <p className="text-sm font-bold text-[#0369a1]">
+              ক্যাশ অন ডেলিভারি অর্ডার ফর্ম · ১০০% নিরাপদ কেনাকাটা
+            </p>
             <h2 className="mt-2 text-2xl font-bold sm:text-3xl">
               পণ্য ও পরিমাণ নির্বাচন করুন
             </h2>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
+            <p className="mt-2 text-sm leading-6 text-slate-600">
               একাধিক পণ্য বেছে নিতে পারবেন। প্রথম পণ্যটি আগে থেকেই নির্বাচিত
-              আছে।
+              আছে। অগ্রিম মূল্য দেওয়ার প্রয়োজন নেই; ক্যাশ অন ডেলিভারি থাকলে পণ্য
+              হাতে পেয়ে পরিশোধ করুন।
             </p>
           </div>
           {products.length ? (
@@ -623,13 +731,33 @@ export default function SensorBulbLandingClient({
                                 product.thumbnail?.src
                           }
                           alt={product.title}
-                          fallback={bulbFallback}
+                          fallback={
+                            product._id === primary?._id
+                              ? bulbFallback
+                              : "/placeholder.webp"
+                          }
                           className="object-contain p-2"
                           sizes="112px"
                         />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="font-bold leading-6">{product.title}</h3>
+                        <label className="flex cursor-pointer items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={selection.quantity > 0}
+                            disabled={
+                              selection.quantity === 0 &&
+                              (!hasStock || !line.inStock)
+                            }
+                            onChange={(event) =>
+                              setProductSelected(product, event.target.checked)
+                            }
+                            className="mt-1 size-5 shrink-0 accent-primary"
+                          />
+                          <span className="font-bold leading-6">
+                            {product.title}
+                          </span>
+                        </label>
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                           <span className="text-lg font-extrabold text-primary">
                             {taka(line.salePrice)}
@@ -647,6 +775,23 @@ export default function SensorBulbLandingClient({
                         )}
                       </div>
                     </div>
+                    {plainDescription(product.shortDescription) && (
+                      <p className="mt-4 text-sm leading-6 text-muted-foreground">
+                        {plainDescription(product.shortDescription)}
+                      </p>
+                    )}
+                    {product.attribute?.length > 0 && (
+                      <dl className="mt-4 grid gap-2 text-xs text-muted-foreground">
+                        {product.attribute.map((attribute) => (
+                          <div key={attribute.name} className="flex gap-2">
+                            <dt className="shrink-0 font-bold text-foreground">
+                              {attribute.name}:
+                            </dt>
+                            <dd>{attribute.values.join(", ")}</dd>
+                          </div>
+                        ))}
+                      </dl>
+                    )}
                     {variations.length > 0 && (
                       <div className="mt-4 border-t border-border pt-2">
                         <VariationSelector
@@ -738,6 +883,7 @@ export default function SensorBulbLandingClient({
                   lines={lines}
                   shippingCharges={shippingCharges}
                   paymentMethods={paymentMethods}
+                  onRemoveProduct={removeProduct}
                 />
               ) : (
                 <p
@@ -752,11 +898,11 @@ export default function SensorBulbLandingClient({
           )}
         </ContainerMax>
       </section>
-      <footer className="border-t border-border bg-background py-6 text-center text-sm text-muted-foreground">
+      <footer className="border-t border-sky-300/20 bg-[#021322] py-6 text-center text-sm text-sky-100/75">
         © {new Date().getFullYear()} {SITE.nameEn} ·{" "}
         <a
           href={`tel:${SITE.phone}`}
-          className="font-semibold text-primary hover:underline"
+          className="font-semibold text-sky-300 hover:underline"
         >
           {SITE.phoneDisplay}
         </a>
