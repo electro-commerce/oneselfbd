@@ -111,6 +111,22 @@
   @apply max-w-7xl mx-auto px-2 md:px-5;
 }
 
+/* Keep the sales checkout readable while the story sections use a dark palette. */
+.pir-checkout {
+  --background: 0 0% 100%;
+  --foreground: 100 6% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 100 6% 10%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 100 6% 10%;
+  --muted: 195 25% 96%;
+  --muted-foreground: 200 15% 42%;
+  --border: 200 20% 90%;
+  --input: 200 20% 90%;
+  --primary: 193 90% 44%;
+  --primary-foreground: 0 0% 100%;
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
