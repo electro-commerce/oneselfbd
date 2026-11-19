@@ -35,6 +35,7 @@ import {
 } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import DemoLandingStory from "./DemoLandingStory";
+import LandingFooter from "@/app/(landing-page)/_components/LandingFooter";
 import {
   firstAvailableVariation,
   inventoryAvailable,
@@ -743,6 +744,8 @@ export default function SensorBulbLandingClient({
           )}
         </ContainerMax>
       </section>
+
+      <LandingFooter />
     </main>
   );
 }
