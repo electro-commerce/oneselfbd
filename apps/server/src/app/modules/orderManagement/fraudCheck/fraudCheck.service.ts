@@ -1,5 +1,11 @@
 import config from "../../../config/config";
-import { Courier, Errors, Report } from "./fraudCheck.interface";
+import { Courier as CourierModel } from "../../courier/courier.model";
+import {
+  Courier,
+  Errors,
+  FormatFraudCheckData,
+  Report,
+} from "./fraudCheck.interface";
 import {
   formatPaperFlyFraudData,
   formatPathaoFraudData,
@@ -7,33 +13,57 @@ import {
   formatSteadfastFraudData,
   formatValue,
 } from "./fraudCheck.utils";
+import { getCourierCredentialValue } from "./steadfastFraudCheck";
 
 const fraudCheckDB = async (mobile: string) => {
   // Define empty result for missing credentials
   const emptyResult = {
     totalOrders: 0,
     totalDeliveries: 0,
+    totalCancellations: 0,
+    deliveryRate: null as number | null,
     couriers: [],
     reports: [],
   };
 
   // Check for credentials
-  const hasSteadfast = config.stead_fast.email && config.stead_fast.password;
+  // Steadfast: credentials MUST come from the database, NOT from local env
+  const steadfastCourier = await CourierModel.findOne({
+    slug: { $in: ["steadfast", "steedfast"] },
+  });
+  const steadfastApiKey = getCourierCredentialValue(
+    steadfastCourier?.credentials,
+    "Api-Key"
+  );
+  const steadfastSecretKey = getCourierCredentialValue(
+    steadfastCourier?.credentials,
+    "Secret-Key"
+  );
+  const hasSteadfast = Boolean(steadfastApiKey && steadfastSecretKey);
+
+  // Other couriers keep as is (local env)
   const hasPathao = config.pathao.username && config.pathao.password;
   const hasRedX = config.redx.phoneNumber && config.redx.password;
   const hasPaperFly = config.paperfly.username && config.paperfly.password;
 
-  const getMissingCredentialResult = (courierName: string) => ({
+  const getMissingCredentialResult = (
+    courierName: string
+  ): FormatFraudCheckData => ({
     ...emptyResult,
     error: true,
     errorFrom: courierName,
-    message: `${courierName} credentials are not configured.`,
+    message: `${courierName} credentials are not configured${
+      courierName === "Steadfast" ? " in database" : ""
+    }.`,
   });
 
   // Fetch all data concurrently
   const [steadFast, pathao, redX, paperFly] = await Promise.all([
     hasSteadfast
-      ? formatSteadfastFraudData(mobile)
+      ? formatSteadfastFraudData(mobile, {
+          apiKey: steadfastApiKey,
+          secretKey: steadfastSecretKey,
+        })
       : Promise.resolve(getMissingCredentialResult("Steadfast")),
     hasPathao
       ? formatPathaoFraudData(mobile)
@@ -77,8 +107,17 @@ const fraudCheckDB = async (mobile: string) => {
     redX.totalDeliveries +
     paperFly.totalDeliveries;
 
-  const totalCancellations = totalOrders - totalDeliveries;
-  const successRatio = (totalDeliveries / totalOrders) * 100 || 0;
+  const totalCancellations = Math.max(0, totalOrders - totalDeliveries);
+
+  let successRatio = 0;
+  if (totalOrders > 0) {
+    successRatio = (totalDeliveries / totalOrders) * 100;
+  } else if (
+    steadFast.deliveryRate !== null &&
+    steadFast.deliveryRate !== undefined
+  ) {
+    successRatio = Number(steadFast.deliveryRate);
+  }
 
   const couriers: Courier[] = [
     ...steadFast.couriers,
@@ -87,12 +126,21 @@ const fraudCheckDB = async (mobile: string) => {
     ...paperFly.couriers,
   ];
 
-  const message =
-    successRatio >= 70
-      ? "ভালো কাস্টমার! ক্যাশ অন ডেলিভারিতে পার্সেল পাঠানো যাবে।"
-      : successRatio >= 40
-        ? "ব্যবহার ও আচরণের উপর নির্ভর করে পার্সেল পাঠানো যাবে, অগ্রিম ডেলিভারি চার্জ নিলে ভালো হয়।"
-        : "সাবধান! পার্সেল পাঠানোর আগে ডেলিভারি চার্জ নিয়ে নিবেন।";
+  const hasHistory =
+    totalOrders > 0 ||
+    (steadFast.deliveryRate !== null && steadFast.deliveryRate !== undefined);
+
+  let message = "";
+  if (!hasHistory) {
+    message = "নতুন কাস্টমার! পূর্বের কোনো ডেলিভারি রেকর্ড পাওয়া যায়নি।";
+  } else if (successRatio >= 70) {
+    message = "ভালো কাস্টমার! ক্যাশ অন ডেলিভারিতে পার্সেল পাঠানো যাবে।";
+  } else if (successRatio >= 40) {
+    message =
+      "ব্যবহার ও আচরণের উপর নির্ভর করে পার্সেল পাঠানো যাবে, অগ্রিম ডেলিভারি চার্জ নিলে ভালো হয়।";
+  } else {
+    message = "সাবধান! পার্সেল পাঠানোর আগে ডেলিভারি চার্জ নিয়ে নিবেন।";
+  }
 
   return {
     phoneNumber: mobile,

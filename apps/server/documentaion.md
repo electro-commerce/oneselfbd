@@ -578,7 +578,7 @@ Courier Fraud Check
 
 Use courier-specific fraud endpoints:
 
-Steadfast: GET https://steadfast.com.bd/user/frauds/check/{phone}
+Steadfast: GET https://portal.packzy.com/api/v1/fraud_check/score/{phone} (Authenticated via Api-Key and Secret-Key from Courier settings in DB)
 
 RedX: GET https://redx.com.bd/api/redx_se/admin/parcel/customer-success-return-rate?phoneNumber={phone}
 

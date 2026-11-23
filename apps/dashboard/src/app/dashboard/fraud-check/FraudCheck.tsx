@@ -25,10 +25,15 @@ type Errors = {
 type Courier = {
   name: string;
   logo: string;
-  orders: number;
-  deliveries: number;
-  cancellations: number;
-  deliveryRate: number;
+  orders: number | string;
+  deliveries: number | string;
+  cancellations: number | string;
+  deliveryRate: number | string | null;
+  volumeBand?: string | null;
+  volumeRange?: string | null;
+  deliveryRatio?: number | null;
+  cancellationRatio?: number | null;
+  doubtfulReports?: boolean;
 };
 
 type Data = {
@@ -316,14 +321,28 @@ const FraudCheck = ({ phoneNumber }: { phoneNumber?: string }) => {
                           {courier.cancellations}
                         </td>
                         <td className="min-w-[150px] px-4 py-3 font-semibold text-foreground">
-                          {courier.deliveryRate}%
-                          <div className="mt-1 h-2 w-full rounded-full bg-muted">
-                            <div
-                              className="h-2 rounded-full bg-emerald-500"
-                              style={{ width: `${courier.deliveryRate}%` }}
-                              title={`Delivery success rate ${courier.deliveryRate}%`}
-                            />
-                          </div>
+                          {courier.deliveryRate !== null &&
+                          courier.deliveryRate !== undefined ? (
+                            <>
+                              {courier.deliveryRate}%
+                              <div className="mt-1 h-2 w-full rounded-full bg-muted">
+                                <div
+                                  className="h-2 rounded-full bg-emerald-500"
+                                  style={{
+                                    width: `${Math.min(
+                                      100,
+                                      Math.max(0, Number(courier.deliveryRate))
+                                    )}%`,
+                                  }}
+                                  title={`Delivery success rate ${courier.deliveryRate}%`}
+                                />
+                              </div>
+                            </>
+                          ) : (
+                            <span className="text-xs font-normal text-muted-foreground">
+                              N/A
+                            </span>
+                          )}
                         </td>
                       </tr>
                     ))}
