@@ -9,7 +9,8 @@ const readContainer = (file) => {
   assert.doesNotMatch(source, /techmela|G-GZERV29BVS|2188533918610069/i);
   return JSON.parse(source).containerVersion;
 };
-const web = readContainer("GTM/GTM-5DN7NRZL_WEB_CONTAINER.json");
+const webFile = process.argv[2] ?? "GTM/GTM-5DN7NRZL_WEB_CONTAINER.json";
+const web = readContainer(webFile);
 const server = readContainer("GTM/GTM-WP3WDF7L_SERVER_CONTAINER.json");
 const byName = (items, name) => {
   const item = items.find((entry) => entry.name === name);
@@ -208,4 +209,21 @@ for (const field of [
   assert.ok(excludedFields.has(field), `GA4 forwarding leaks ${field}`);
 }
 
-process.stdout.write("GTM web/server container contract verified\n");
+if (webFile === "GTM/ONESELF_WEB_SERVER_ROUTING_FIX.json") {
+  for (const tag of web.tag.filter((entry) => entry.type === "gaawe")) {
+    assert.deepEqual(tag.setupTag, [
+      { tagName: googleTag.name, stopOnSetupFailure: true },
+    ]);
+  }
+  for (const variable of web.variable.filter((entry) =>
+    entry.name.startsWith("DLV - eventModel."),
+  )) {
+    assert.equal(
+      param(variable, "name").value,
+      variable.name.replace("DLV - eventModel.", "oneself_event."),
+      `${variable.name} must read the application's stable payload`,
+    );
+  }
+}
+
+process.stdout.write(`GTM web/server container contract verified: ${webFile}\n`);

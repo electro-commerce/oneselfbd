@@ -1,4 +1,4 @@
-import InitGTM from "@/components/GTM/InitGTM";
+import InitGTM, { getGTMTransportScript } from "@/components/GTM/InitGTM";
 import PageTracking from "@/components/GTM/PageTracking";
 import JsonLd from "@/components/shared/JsonLd";
 import { Toaster } from "@/components/ui/toaster";
@@ -6,6 +6,7 @@ import { SITE } from "@/const/site.const";
 import StoreProvider from "@/redux/StoreProvider";
 import { Metadata } from "next";
 import { Hind_Siliguri, Inter, Plus_Jakarta_Sans } from "next/font/google";
+import Script from "next/script";
 import { ReactNode, Suspense } from "react";
 import "./globals.css";
 
@@ -90,9 +91,17 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const gtmTransportScript = getGTMTransportScript();
   return (
     <html lang="bn">
       <head>
+        {gtmTransportScript && (
+          <Script
+            id="oneself-gtm-transport"
+            strategy="beforeInteractive"
+            dangerouslySetInnerHTML={{ __html: gtmTransportScript }}
+          />
+        )}
         <link rel="preconnect" href={SITE.apiUrl} />
         <link rel="dns-prefetch" href={SITE.apiUrl} />
       </head>

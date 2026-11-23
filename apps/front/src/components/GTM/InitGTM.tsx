@@ -1,6 +1,26 @@
 import config from "@/config/config";
 import { GoogleTagManager } from "@next/third-parties/google";
 
+export const getGTMTransportScript = () => {
+  if (!config.gtm_id) {
+    return null;
+  }
+  // Queue transport defaults before GTM starts. A configuration tag inside
+  // GTM can run after the Analytics destination has already initialized.
+  const defaults = JSON.stringify({
+    server_container_url: config.gtm_server_url,
+    send_page_view: false,
+  }).replace(/</g, "\\u003c");
+
+  return `
+    window.dataLayer = window.dataLayer || [];
+    (function () {
+      function gtag() { window.dataLayer.push(arguments); }
+      gtag('set', ${defaults});
+    })();
+  `;
+};
+
 const InitGTM = () => {
   const gtmId = config.gtm_id;
   if (!gtmId) {

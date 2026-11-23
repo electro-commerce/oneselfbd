@@ -19,6 +19,7 @@ const RESET_PAYLOAD = {
   custom_data: null,
   user_data: null,
   eventModel: null,
+  oneself_event: null,
 } as const;
 
 export const pushGTMEvent = (payload: GTMEventPayload) => {
