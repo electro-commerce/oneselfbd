@@ -7,6 +7,9 @@ const config = {
     process.env.NEXT_PUBLIC_FRONT_TRACKING_API_URL ||
     "http://localhost:5001/api/v1/events",
   gtm_id: process.env.NEXT_PUBLIC_FRONT_GTM_ID || process.env.GTM_ID || "",
+  gtm_server_url:
+    process.env.NEXT_PUBLIC_FRONT_GTM_SERVER_URL ||
+    "https://tracking.oneselfbd.com",
 };
 
 export default config;

@@ -101,6 +101,8 @@ export type GTMEventPayload = {
   custom_data?: DLVCustomData;
   ecommerce?: DLVEcommerce;
   user_data?: DLVUserData;
+  // Stable application data for GTM variables, separate from eventModel.
+  oneself_event?: GTMEventPayload["eventModel"];
   // GA4 eventModel compatibility
   eventModel: {
     event_id: string;

@@ -100,7 +100,7 @@ export const buildGTMEventPayload = (
     items,
   });
 
-  return {
+  const event: GTMEventPayload = {
     event:
       payload.event_name === "page_view"
         ? "custom_page_view"
@@ -182,4 +182,10 @@ export const buildGTMEventPayload = (
       event_source_url: payload.event_source_url,
     }),
   };
+
+  // GTM manages eventModel internally; its Data Layer Variables can lose
+  // that value while Google tags process configuration and event commands.
+  // Keep a separate copy for the Oneself container's variables.
+  event.oneself_event = event.eventModel;
+  return event;
 };
